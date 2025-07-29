@@ -28,6 +28,10 @@ struct ReadingPassageSessionView: View {
     @State private var duration: TimeInterval = 0
 
     @State private var selectedPassageIndex = 0
+    @State private var fontSize: CGFloat = 16
+    @State private var selectedFont: String = "System"
+
+    let availableFonts = ["System", "Times New Roman", "Georgia", "Helvetica", "Verdana"]
 
     // Validation thresholds
     let minSessionDuration: TimeInterval = 6.0   // seconds
@@ -57,9 +61,9 @@ struct ReadingPassageSessionView: View {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 12) {
                             Text(passages[index].title)
-                                .font(.headline)
-                                .bold()
+                                .font(Font.custom(selectedFont, size: fontSize + 2).weight(.bold))
                             Text(passages[index].text)
+                                .font(Font.custom(selectedFont, size: fontSize))
                                 .multilineTextAlignment(.leading)
                         }
                         .padding()
@@ -69,6 +73,42 @@ struct ReadingPassageSessionView: View {
             }
             .tabViewStyle(.page(indexDisplayMode: .automatic))
             .frame(height: 300)
+
+            HStack {
+                Button(action: {
+                    if selectedPassageIndex > 0 {
+                        selectedPassageIndex -= 1
+                    }
+                }) {
+                    Image(systemName: "arrow.left")
+                }
+                .disabled(selectedPassageIndex == 0)
+
+                Spacer()
+
+                Button(action: {
+                    if selectedPassageIndex < passages.count - 1 {
+                        selectedPassageIndex += 1
+                    }
+                }) {
+                    Image(systemName: "arrow.right")
+                }
+                .disabled(selectedPassageIndex == passages.count - 1)
+            }
+            .padding(.horizontal)
+
+            HStack {
+                Picker("Font", selection: $selectedFont) {
+                    ForEach(availableFonts, id: \.self) { font in
+                        Text(font).tag(font)
+                    }
+                }
+                .pickerStyle(.menu)
+
+                Stepper("Size: \(Int(fontSize))", value: $fontSize, in: 12...28)
+            }
+            .padding(.horizontal)
+
 
             Button(isRecording ? "Stop Recording" : "Start Recording") {
                 isRecording ? stopRecording() : startRecording()
