@@ -27,9 +27,7 @@ struct ReadingPassageSessionView: View {
     @State private var calculatedF0: Double?
     @State private var duration: TimeInterval = 0
 
-    let passage = """
-    When the sunlight strikes raindrops in the air, they act as a prism and form a rainbow. The rainbow is a division of white light into many beautiful colors.
-    """
+    @State private var selectedPassageIndex = 0
 
     // Validation thresholds
     let minSessionDuration: TimeInterval = 6.0   // seconds
@@ -54,11 +52,23 @@ struct ReadingPassageSessionView: View {
                 .font(.title2)
                 .bold()
 
-            ScrollView {
-                Text(passage)
-                    .padding()
-                    .multilineTextAlignment(.leading)
+            TabView(selection: $selectedPassageIndex) {
+                ForEach(passages.indices, id: \.self) { index in
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text(passages[index].title)
+                                .font(.headline)
+                                .bold()
+                            Text(passages[index].text)
+                                .multilineTextAlignment(.leading)
+                        }
+                        .padding()
+                    }
+                    .tag(index)
+                }
             }
+            .tabViewStyle(.page(indexDisplayMode: .automatic))
+            .frame(height: 300)
 
             Button(isRecording ? "Stop Recording" : "Start Recording") {
                 isRecording ? stopRecording() : startRecording()
@@ -166,7 +176,7 @@ struct ReadingPassageSessionView: View {
             type: .readingAnalysis,
             pitchSamples: filtered,
             duration: duration,
-            notes: "Reading passage f₀"
+            notes: passages[selectedPassageIndex].title
         )
     }
 
