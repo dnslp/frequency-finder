@@ -22,11 +22,23 @@ class UserProfileManager: ObservableObject {
     }
 
     init() {
-        let loadedProfile = Self.loadProfileFromDiskStatic()
+        var loadedProfile = Self.loadProfileFromDiskStatic()
+        if var profile = loadedProfile {
+            // If the app version or device model is missing (e.g., for existing users), update it.
+            if profile.appVersion == nil {
+                profile.appVersion = Self.getAppVersion()
+            }
+            if profile.deviceModel == nil {
+                profile.deviceModel = Self.getDeviceModel()
+            }
+            loadedProfile = profile
+        }
+
         self.currentProfile = loadedProfile ?? UserProfileManager.createDefaultProfile()
         self.hasCompletedOnboarding = UserDefaults.standard.bool(forKey: "hasCompletedOnboarding")
 
-        if loadedProfile == nil {
+        // Save the profile if it's new or has been updated.
+        if loadedProfile == nil || self.currentProfile.appVersion != Self.getAppVersion() || self.currentProfile.deviceModel != Self.getDeviceModel() {
             saveProfileToDisk()
         }
     }
@@ -85,6 +97,9 @@ class UserProfileManager: ObservableObject {
             id: UUID(),
             createdAt: Date(),
             lastActive: Date(),
+            experienceLevel: nil, // To be set during onboarding
+            appVersion: getAppVersion(),
+            deviceModel: getDeviceModel(),
             preferences: UserPreferences(
                 flowType: .both,
                 reminderEnabled: false,
@@ -116,5 +131,22 @@ class UserProfileManager: ObservableObject {
                 preferredSessionTimeWindow: "unspecified"
             )
         )
+    }
+
+    // MARK: - Private Helpers
+
+    private static func getAppVersion() -> String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "Unknown"
+    }
+
+    private static func getDeviceModel() -> String {
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        let machineMirror = Mirror(reflecting: systemInfo.machine)
+        let identifier = machineMirror.children.reduce("") { identifier, element in
+            guard let value = element.value as? Int8, value != 0 else { return identifier }
+            return identifier + String(UnicodeScalar(UInt8(value)))
+        }
+        return identifier
     }
 }

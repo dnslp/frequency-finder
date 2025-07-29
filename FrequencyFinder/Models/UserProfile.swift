@@ -49,15 +49,23 @@ enum HeadphoneType: String, Codable {
     case wired, bluetooth, none
 }
 
+enum ExperienceLevel: String, Codable {
+    case beginner, intermediate, advanced, professional
+}
+
 // MARK: - UserProfile
 
 struct UserProfile: Codable, Identifiable {
     let id: UUID
     var createdAt: Date
     var lastActive: Date
-    
+
     var onboardingHistory: [OnboardingEntry] = []
 
+    // New properties
+    var experienceLevel: ExperienceLevel?
+    var appVersion: String?
+    var deviceModel: String?
 
     var preferences: UserPreferences
     var sessions: [VoiceSession]
