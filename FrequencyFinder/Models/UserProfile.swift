@@ -81,13 +81,13 @@ struct UserProfile: Codable, Identifiable {
     // Update f₀ and related fields
     mutating func recalculateF0() {
         let f0s = sessions
-            .filter { $0.type == .readingAnalysis || $0.type == .centering }
+            .filter { !$0.isDeleted && ($0.type == .readingAnalysis || $0.type == .centering) }
             .compactMap { $0.medianF0 }
 
         calculatedF0 = f0s.median()
         vocalRange = VocalRange.from(f0: calculatedF0)
         f0StabilityScore = f0s.standardDeviation()
-        pitchRange = sessions.flatMap { $0.pitchSamples }.range()
+        pitchRange = sessions.filter { !$0.isDeleted }.flatMap { $0.pitchSamples }.range()
     }
 }
 
@@ -113,8 +113,10 @@ struct VoiceSession: Codable, Identifiable {
     let medianF0: Double?
     let meanF0: Double?
     let notes: String?
+    var isDeleted: Bool
+    var deletionRationale: String?
 
-    init(type: SessionType, pitchSamples: [Double], duration: TimeInterval, notes: String? = nil) {
+    init(type: SessionType, pitchSamples: [Double], duration: TimeInterval, notes: String? = nil, isDeleted: Bool = false, deletionRationale: String? = nil) {
         self.id = UUID()
         self.type = type
         self.timestamp = Date()
@@ -123,6 +125,8 @@ struct VoiceSession: Codable, Identifiable {
         self.medianF0 = pitchSamples.median()
         self.meanF0 = pitchSamples.mean()
         self.notes = notes
+        self.isDeleted = isDeleted
+        self.deletionRationale = deletionRationale
     }
 }
 

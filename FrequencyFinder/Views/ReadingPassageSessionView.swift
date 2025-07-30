@@ -206,25 +206,18 @@ struct ReadingPassageSessionView: View {
             return
         }
 
-        let filtered = trimOutliers(from: pitchSamples)
-        let median = filtered.median()
+        let statsCalculator = StatisticsCalculator()
+        let filteredSamples = statsCalculator.removeOutliers(from: pitchSamples)
+        let median = filteredSamples.median()
 
         calculatedF0 = median
         showResult = true
 
         profileManager.addSession(
             type: .readingAnalysis,
-            pitchSamples: filtered,
+            pitchSamples: filteredSamples,
             duration: duration,
             notes: passages[selectedPassageIndex].title
         )
-    }
-
-    func trimOutliers(from samples: [Double]) -> [Double] {
-        guard samples.count >= 5 else { return samples }
-        let mean = samples.mean()
-        let std = samples.standardDeviation()
-        let threshold = std * 1.5
-        return samples.filter { abs($0 - mean) <= threshold }
     }
 }

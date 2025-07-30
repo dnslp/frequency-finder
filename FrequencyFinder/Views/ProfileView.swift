@@ -40,8 +40,12 @@ struct ProfileView: View {
                 }
 
                 Section(header: Text("🎙️ Sessions")) {
-                    Text("Total Sessions: \(profile.analytics.totalSessionCount)")
-                    Text("Total Time: \(formatTime(profile.analytics.totalDuration))")
+                    NavigationLink(destination: SessionHistoryView(profileManager: profileManager)) {
+                        VStack(alignment: .leading) {
+                            Text("Total Sessions: \(profile.analytics.totalSessionCount)")
+                            Text("Total Time: \(formatTime(profile.analytics.totalDuration))")
+                        }
+                    }
                 }
                 
                 Section(header: Text("📊 f₀ Trend")) {
