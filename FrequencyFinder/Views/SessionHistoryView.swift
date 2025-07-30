@@ -10,16 +10,37 @@ struct SessionHistoryView: View {
         NavigationView {
             List {
                 ForEach(profileManager.currentProfile.sessions.filter { !$0.isDeleted }) { session in
-                    VStack(alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 8) {
                         Text(session.notes ?? "Session")
                             .font(.headline)
-                        Text("Date: \(session.timestamp, formatter: itemFormatter)")
-                        Text(String(format: "Duration: %.1f seconds", session.duration))
-                        if let medianF0 = session.medianF0 {
-                            Text(String(format: "Median F0: %.1f Hz", medianF0))
-                        }
-                        if let meanF0 = session.meanF0 {
-                            Text(String(format: "Mean F0: %.1f Hz", meanF0))
+
+                        SparklineView(data: session.pitchSamples)
+                            .frame(height: 50)
+                            .padding(.vertical, 5)
+
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text("Date: \(session.timestamp, formatter: itemFormatter)")
+                                Text(String(format: "Duration: %.1f seconds", session.duration))
+                            }
+                            Spacer()
+                            VStack(alignment: .leading) {
+                                if let medianF0 = session.medianF0 {
+                                    Text(String(format: "Median F0: %.1f Hz", medianF0))
+                                }
+                                if let meanF0 = session.meanF0 {
+                                    Text(String(format: "Mean F0: %.1f Hz", meanF0))
+                                }
+                                if let minF0 = session.minF0 {
+                                    Text(String(format: "Min F0: %.1f Hz", minF0))
+                                }
+                                if let maxF0 = session.maxF0 {
+                                    Text(String(format: "Max F0: %.1f Hz", maxF0))
+                                }
+                                if let stdevF0 = session.stdevF0 {
+                                    Text(String(format: "Std Dev: %.1f Hz", stdevF0))
+                                }
+                            }
                         }
                     }
                 }

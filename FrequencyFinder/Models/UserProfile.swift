@@ -112,6 +112,9 @@ struct VoiceSession: Codable, Identifiable {
     let pitchSamples: [Double]
     let medianF0: Double?
     let meanF0: Double?
+    let minF0: Double?
+    let maxF0: Double?
+    let stdevF0: Double?
     let notes: String?
     var isDeleted: Bool
     var deletionRationale: String?
@@ -122,11 +125,24 @@ struct VoiceSession: Codable, Identifiable {
         self.timestamp = Date()
         self.duration = duration
         self.pitchSamples = pitchSamples
-        self.medianF0 = pitchSamples.median()
-        self.meanF0 = pitchSamples.mean()
-        self.notes = notes
         self.isDeleted = isDeleted
         self.deletionRationale = deletionRationale
+        self.notes = notes
+
+        let statsCalculator = StatisticsCalculator()
+        if let stats = statsCalculator.calculateStatistics(for: pitchSamples) {
+            self.minF0 = stats.min
+            self.maxF0 = stats.max
+            self.meanF0 = stats.avg
+            self.medianF0 = stats.median
+            self.stdevF0 = pitchSamples.standardDeviation()
+        } else {
+            self.minF0 = nil
+            self.maxF0 = nil
+            self.meanF0 = nil
+            self.medianF0 = nil
+            self.stdevF0 = nil
+        }
     }
 }
 
