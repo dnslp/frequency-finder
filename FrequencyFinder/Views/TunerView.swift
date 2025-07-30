@@ -22,7 +22,6 @@ struct TunerView: View {
 #else
         iOSView
             .onReceive(updateTimer) { _ in
-                tunerData.updateDeltaCents()
                 localCentsOffset = tunerData.deltaCents
             }
 #endif
