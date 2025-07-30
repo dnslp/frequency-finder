@@ -14,10 +14,6 @@ struct SessionHistoryView: View {
                         Text(session.notes ?? "Session")
                             .font(.headline)
 
-                        SparklineView(data: session.pitchSamples)
-                            .frame(height: 50)
-                            .padding(.vertical, 5)
-
                         HStack {
                             VStack(alignment: .leading) {
                                 Text("Date: \(session.timestamp, formatter: itemFormatter)")
