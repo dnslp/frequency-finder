@@ -44,63 +44,6 @@ enum ScaleNote: Int, CaseIterable, Identifiable {
         }
     }
 
-    /// Find the closest note to the specified frequency.
-    ///
-    /// - parameter frequency: The frequency to match against.
-    ///
-    /// - returns: The closest note match.
-    static func closestNote(to frequency: Frequency) -> Match {
-        // Shift frequency octave to be within range of scale note frequencies.
-        var octaveShiftedFrequency = frequency
-
-        while octaveShiftedFrequency > allCases.last!.frequency {
-            octaveShiftedFrequency.shift(byOctaves: -1)
-        }
-
-        while octaveShiftedFrequency < allCases.first!.frequency {
-            octaveShiftedFrequency.shift(byOctaves: 1)
-        }
-
-        // Find closest note
-        let closestNote = allCases.min(by: { note1, note2 in
-            fabsf(note1.frequency.distance(to: octaveShiftedFrequency).cents) <
-                fabsf(note2.frequency.distance(to: octaveShiftedFrequency).cents)
-        })!
-
-        let octave = max(octaveShiftedFrequency.distanceInOctaves(to: frequency), 0)
-
-        let fastResult = Match(
-            note: closestNote,
-            octave: octave,
-            distance: closestNote.frequency.distance(to: octaveShiftedFrequency)
-        )
-
-        // Fast result can be incorrect at the scale boundary
-        guard fastResult.note == .C && fastResult.distance.isFlat ||
-                fastResult.note == .B && fastResult.distance.isSharp else
-        {
-            return fastResult
-        }
-
-        var match: Match?
-        for octave in [octave, octave + 1] {
-            for note in [ScaleNote.C, .B] {
-                let distance = note.frequency.shifted(byOctaves: octave).distance(to: frequency)
-                if let match = match, abs(distance.cents) > abs(match.distance.cents) {
-                    return match
-                } else {
-                    match = Match(
-                        note: note,
-                        octave: octave,
-                        distance: distance
-                    )
-                }
-            }
-        }
-
-        assertionFailure("Closest note could not be found")
-        return fastResult
-    }
 
     /// The names for this note.
     var names: [String] {
