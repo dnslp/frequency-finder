@@ -22,6 +22,10 @@ struct FrequencyFinderApp: App {
                         .tabItem {
                             Label("Reading", systemImage: "book")
                         }
+                    SessionHistoryView(profileManager: profileManager)
+                        .tabItem {
+                            Label("History", systemImage: "clock.arrow.circlepath")
+                        }
                 }
             } else {
                 OnboardingView(profileManager: profileManager, showOnboarding: $showOnboarding)
