@@ -27,7 +27,7 @@ class ReadingPassageViewModel: ObservableObject {
     private var pitchTimer: Timer?
     private var elapsedTimer: Timer?
 
-    let availableFonts = ["System", "Times New Roman", "Georgia", "Helvetica", "Verdana"]
+    let availableFonts = ["System", "Times New Roman", "Georgia", "Helvetica", "Verdana", "Courier New"]
     let minSessionDuration: TimeInterval = 6.0
     let minSampleCount: Int = 12
     private let pitchSmoothingFactor: Double = 0.1
