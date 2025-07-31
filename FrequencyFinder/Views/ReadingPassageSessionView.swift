@@ -1,16 +1,43 @@
 import SwiftUI
 
 struct ReadingPassageSessionView: View {
+    // Inject UserProfileManager to VM via initializer
     @StateObject private var viewModel: ReadingPassageViewModel
 
     init(profileManager: UserProfileManager) {
-        _viewModel = StateObject(wrappedValue: ReadingPassageViewModel(profileManager: profileManager))
+        _viewModel = StateObject(
+            wrappedValue: ReadingPassageViewModel(profileManager: profileManager)
+        )
     }
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 24) {
-                // Content of the VStack
+            ScrollView {
+                VStack(spacing: 24) {
+                    // Passage selector
+                    PassageSelectionView(viewModel: viewModel)
+
+                    // Passage text display
+                    PassageTextView(viewModel: viewModel)
+
+                    // Recording controls (font, size, start/stop)
+                    RecordingControlsView(viewModel: viewModel)
+
+                    // Recording status or results
+                    if viewModel.isRecording {
+                        RecordingStatusView(viewModel: viewModel)
+                    } else if viewModel.showResult {
+                        ResultsView(viewModel: viewModel)
+                    }
+
+                    // Re-record prompt
+                    if viewModel.promptRerecord {
+                        Text("Recording too short or invalid. Please try again.")
+                            .foregroundColor(.red)
+                            .padding(.top)
+                    }
+                }
+                .padding()
             }
             .navigationTitle("Reading Analysis")
             .toolbar {
@@ -25,48 +52,29 @@ struct ReadingPassageSessionView: View {
                     }
                 }
             }
-
-            PassageTextView(viewModel: viewModel)
-
-            RecordingControlsView(viewModel: viewModel)
-
-            if viewModel.isRecording {
-                RecordingStatusView(viewModel: viewModel)
+            .onDisappear {
+                viewModel.invalidateTimers()
             }
-
-            if viewModel.showResult {
-                ResultsView(viewModel: viewModel)
+            .task {
+                await viewModel.activatePitchDetector()
             }
-
-            if viewModel.promptRerecord {
-                Text("Recording too short or invalid. Please try again.")
-                    .foregroundColor(.red)
-            }
-        }
-        .padding()
-        .onDisappear {
-            viewModel.invalidateTimers()
-        }
-        .task {
-            viewModel.activatePitchDetector()
         }
     }
 }
 
+// MARK: - Subviews
+
 struct PassageSelectionView: View {
     @ObservedObject var viewModel: ReadingPassageViewModel
-
     var body: some View {
-        HStack {
-            Picker("Passage", selection: $viewModel.selectedPassageIndex) {
-                ForEach(ReadingPassage.passages.indices, id: \.self) { index in
-                    let passage = ReadingPassage.passages[index]
-                    Text("\(passage.title) (\(passage.skillFocus))").tag(index)
-                }
+        Picker("Passage", selection: $viewModel.selectedPassageIndex) {
+            ForEach(ReadingPassage.passages.indices, id: \.self) { idx in
+                let p = ReadingPassage.passages[idx]
+                Text("\(p.title) (\(p.skillFocus))").tag(idx)
             }
-            .pickerStyle(.menu)
-            .disabled(viewModel.isRecording)
         }
+        .pickerStyle(.menu)
+        .disabled(viewModel.isRecording)
     }
 }
 
@@ -74,9 +82,9 @@ struct PassageTextView: View {
     @ObservedObject var viewModel: ReadingPassageViewModel
 
     var body: some View {
+        let passage = ReadingPassage.passages[viewModel.selectedPassageIndex]
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
-                let passage = ReadingPassage.passages[viewModel.selectedPassageIndex]
                 HStack {
                     Text(passage.title)
                         .font(Font.custom(viewModel.selectedFont, size: viewModel.fontSize + 2).weight(.bold))
@@ -93,15 +101,14 @@ struct PassageTextView: View {
             }
             .padding()
         }
-        .frame(height: 300)
+        .frame(height: 400)
     }
 }
 
 struct RecordingControlsView: View {
     @ObservedObject var viewModel: ReadingPassageViewModel
-
     var body: some View {
-        VStack {
+        VStack(spacing: 12) {
             HStack {
                 Picker("Font", selection: $viewModel.selectedFont) {
                     ForEach(viewModel.availableFonts, id: \.self) { font in
@@ -117,9 +124,12 @@ struct RecordingControlsView: View {
             .padding(.horizontal)
 
             Button(viewModel.isRecording ? "Stop Recording" : "Start Recording") {
-                viewModel.isRecording ? viewModel.stopRecording() : viewModel.startRecording()
+                if viewModel.isRecording {
+                    viewModel.stopRecording()
+                } else {
+                    viewModel.startRecording()
+                }
             }
-            .padding()
             .buttonStyle(.borderedProminent)
         }
     }
@@ -127,10 +137,10 @@ struct RecordingControlsView: View {
 
 struct RecordingStatusView: View {
     @ObservedObject var viewModel: ReadingPassageViewModel
-
     var body: some View {
-        VStack {
-            Text("🎙️ Recording...").foregroundColor(.green)
+        VStack(spacing: 12) {
+            Text("🎙️ Recording...")
+                .foregroundColor(.green)
             Text("⏱ Elapsed: \(viewModel.formatTime(viewModel.elapsedTime))")
 
             ProgressView(value: viewModel.elapsedTime, total: viewModel.minSessionDuration) {
@@ -140,7 +150,7 @@ struct RecordingStatusView: View {
             .padding(.horizontal)
 
             SineWaveView(
-                frequency: max(0.5, min(viewModel.smoothedPitch / 200, 6.0)), // normalized
+                frequency: max(0.5, min(viewModel.smoothedPitch / 200, 6.0)),
                 amplitude: 0.6,
                 phase: viewModel.wavePhase
             )
@@ -152,12 +162,9 @@ struct RecordingStatusView: View {
 
 struct ResultsView: View {
     @ObservedObject var viewModel: ReadingPassageViewModel
-
     var body: some View {
         VStack(spacing: 12) {
-            Text("Session Complete 🎉")
-                .font(.headline)
-
+            Text("Session Complete 🎉").font(.headline)
             Text("Passage: \(ReadingPassage.passages[viewModel.selectedPassageIndex].title)")
                 .font(.subheadline)
 
@@ -165,31 +172,26 @@ struct ResultsView: View {
                let stdDev = viewModel.pitchStdDev,
                let minPitch = viewModel.pitchMin,
                let maxPitch = viewModel.pitchMax {
-
                 VStack(spacing: 8) {
                     Text("Average Pitch (f₀): \(f0, specifier: "%.1f") Hz")
-                        .font(.body)
-
                     Divider()
-
                     Text("Pitch Stability: \(stdDev, specifier: "%.1f") Hz")
-                        .font(.body)
-                    Text("A lower number means a more steady pitch.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-
+                        .font(.caption).foregroundColor(.secondary)
                     Divider()
-
                     Text("Pitch Range: \(minPitch, specifier: "%.1f") - \(maxPitch, specifier: "%.1f") Hz")
-                        .font(.body)
-                    Text("This shows the lowest and highest notes you used.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                        .font(.caption).foregroundColor(.secondary)
                 }
-                .padding()
-                .background(Color(.systemGray6))
-                .cornerRadius(10)
+                .padding().background(Color(.systemGray6)).cornerRadius(10)
             }
         }
+        .padding()
+    }
+}
+
+// MARK: - Preview
+struct ReadingPassageSessionView_Previews: PreviewProvider {
+    static var previews: some View {
+        let profileManager = UserProfileManager()
+        ReadingPassageSessionView(profileManager: profileManager)
     }
 }
