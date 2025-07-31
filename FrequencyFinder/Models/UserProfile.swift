@@ -81,13 +81,13 @@ struct UserProfile: Codable, Identifiable {
     // Update f₀ and related fields
     mutating func recalculateF0() {
         let f0s = sessions
-            .filter { $0.type == .readingAnalysis || $0.type == .centering }
+            .filter { !$0.isDeleted && ($0.type == .readingAnalysis || $0.type == .centering) }
             .compactMap { $0.medianF0 }
 
         calculatedF0 = f0s.median()
         vocalRange = VocalRange.from(f0: calculatedF0)
         f0StabilityScore = f0s.standardDeviation()
-        pitchRange = sessions.flatMap { $0.pitchSamples }.range()
+        pitchRange = sessions.filter { !$0.isDeleted }.flatMap { $0.pitchSamples }.range()
     }
 }
 
@@ -112,17 +112,37 @@ struct VoiceSession: Codable, Identifiable {
     let pitchSamples: [Double]
     let medianF0: Double?
     let meanF0: Double?
+    let minF0: Double?
+    let maxF0: Double?
+    let stdevF0: Double?
     let notes: String?
+    var isDeleted: Bool
+    var deletionRationale: String?
 
-    init(type: SessionType, pitchSamples: [Double], duration: TimeInterval, notes: String? = nil) {
+    init(type: SessionType, pitchSamples: [Double], duration: TimeInterval, notes: String? = nil, isDeleted: Bool = false, deletionRationale: String? = nil) {
         self.id = UUID()
         self.type = type
         self.timestamp = Date()
         self.duration = duration
         self.pitchSamples = pitchSamples
-        self.medianF0 = pitchSamples.median()
-        self.meanF0 = pitchSamples.mean()
+        self.isDeleted = isDeleted
+        self.deletionRationale = deletionRationale
         self.notes = notes
+
+        let statsCalculator = StatisticsCalculator()
+        if let stats = statsCalculator.calculateStatistics(for: pitchSamples) {
+            self.minF0 = stats.min
+            self.maxF0 = stats.max
+            self.meanF0 = stats.avg
+            self.medianF0 = stats.median
+            self.stdevF0 = pitchSamples.standardDeviation()
+        } else {
+            self.minF0 = nil
+            self.maxF0 = nil
+            self.meanF0 = nil
+            self.medianF0 = nil
+            self.stdevF0 = nil
+        }
     }
 }
 
