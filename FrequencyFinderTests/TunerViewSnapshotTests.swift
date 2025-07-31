@@ -11,11 +11,8 @@ final class TunerViewSnapshotTests: XCTestCase {
     }
 
     func testTunerView() {
-        let view = TunerView(
-            tunerData: TunerData(),
-            modifierPreference: .preferSharps,
-            selectedTransposition: 0
-        )
+        let viewModel = TunerViewModel(pitchTracker: PitchTracker())
+        let view = TunerView(viewModel: viewModel)
         for device in SnapshotDevice.all {
             assertSnapshot(
                 matching: view,

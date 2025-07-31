@@ -1,17 +1,15 @@
 //
-//  TunerData.swift
+//  TunerViewModel.swift
 //  FrequencyFinder
 //
 //  Created by David Nyman on 7/28/25.
 //
-//  DEPRECATED: This class is deprecated and will be removed in a future version.
-//  All logic has been moved to TunerViewModel.
-//
 
 import Foundation
 import Combine
+import SwiftUI
 
-final class TunerData: ObservableObject {
+final class TunerViewModel: ObservableObject {
     // MARK: - Components
     let pitchTracker: PitchTracker
     let recorder: Recorder
@@ -28,21 +26,32 @@ final class TunerData: ObservableObject {
     @Published var amplitude: Double
     @Published var harmonics: [Double]
 
+    // MARK: - Properties from View
+    @Published var modifierPreference: ModifierPreference
+    @Published var selectedTransposition: Int
+    @Published private(set) var centsOffset: Double = 0
+
     private var cancellables = Set<AnyCancellable>()
 
     // MARK: - Init
     init(
-        pitch: Double = 440,
+        pitchTracker: PitchTracker,
+        recorder: Recorder = Recorder(),
+        statisticsCalculator: StatisticsCalculator = StatisticsCalculator(),
         amplitude: Double = 0.0,
         harmonics: [Double]? = nil,
-        smoothingFactor: Double = 0.1
+        modifierPreference: ModifierPreference = .preferSharps,
+        selectedTransposition: Int = 0
     ) {
-        self.pitchTracker = PitchTracker(pitch: pitch, smoothingFactor: smoothingFactor)
-        self.recorder = Recorder()
-        self.statisticsCalculator = StatisticsCalculator()
+        self.pitchTracker = pitchTracker
+        self.recorder = recorder
+        self.statisticsCalculator = statisticsCalculator
 
         self.amplitude = amplitude
-        self.harmonics = harmonics ?? (1...7).map { Double($0) * pitch }
+        self.harmonics = harmonics ?? (1...7).map { Double($0) * pitchTracker.pitch.measurement.value }
+
+        self.modifierPreference = modifierPreference
+        self.selectedTransposition = selectedTransposition
 
         // Initialize published properties from components
         self.pitch = pitchTracker.pitch
@@ -57,6 +66,42 @@ final class TunerData: ObservableObject {
         pitchTracker.$deltaCents.assign(to: &$deltaCents)
         recorder.$isRecording.assign(to: &$isRecording)
         recorder.$recordedPitches.assign(to: &$recordedPitches)
+
+        // Timer to update centsOffset
+        Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
+            .sink { [weak self] _ in
+                self?.centsOffset = self?.deltaCents ?? 0
+            }
+            .store(in: &cancellables)
+    }
+
+    // MARK: - Computed Properties for View
+    var match: ScaleNote.Match {
+        closestNote.inTransposition(ScaleNote.allCases[selectedTransposition])
+    }
+
+    var targetFrequencyString: String {
+        String(format: "%.1f Hz", match.frequency.measurement.value)
+    }
+
+    var actualFrequencyString: String {
+        String(format: "%.1f Hz", pitch.measurement.value)
+    }
+
+    var noteNameString: String {
+        let names = match.note.names
+        if names.count > 1 {
+            return modifierPreference == .preferSharps ? names[0] : names[1]
+        }
+        return names[0]
+    }
+
+    var octave: Int {
+        match.octave
+    }
+
+    var harmonicsString: String {
+        "\(harmonics.map { String(format: "%.1f", $0) }.joined(separator: ", "))"
     }
 
     // MARK: - Method Delegation

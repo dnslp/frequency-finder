@@ -2,28 +2,16 @@ import SwiftUI
 import Combine
 
 struct TunerView: View {
-    @ObservedObject var tunerData: TunerData
-    @State var modifierPreference: ModifierPreference
-    @State var selectedTransposition: Int
-    @State private var localCentsOffset: Double = 0
+    @ObservedObject var viewModel: TunerViewModel
     
     @AppStorage("HidesTranspositionMenu")
     private var hidesTranspositionMenu = false
-    
-    private let updateTimer = Timer.publish(every: 0.1, on: .main, in: .common).autoconnect()
-    
-    private var match: ScaleNote.Match {
-        tunerData.closestNote.inTransposition(ScaleNote.allCases[selectedTransposition])
-    }
     
     var body: some View {
 #if os(watchOS)
         watchView
 #else
         iOSView
-            .onReceive(updateTimer) { _ in
-                localCentsOffset = tunerData.deltaCents
-            }
 #endif
     }
     
@@ -33,7 +21,7 @@ struct TunerView: View {
         VStack(alignment: .noteCenter) {
             if !hidesTranspositionMenu {
                 HStack {
-                    TranspositionMenu(selectedTransposition: $selectedTransposition)
+                    TranspositionMenu(selectedTransposition: $viewModel.selectedTransposition)
                         .padding()
                     Spacer()
                 }
@@ -42,10 +30,10 @@ struct TunerView: View {
             Spacer()
             
             Group {
-                Text("Target: \(tunerData.closestNote.frequency.measurement.value, specifier: "%.1f") Hz")
-                Text("Actual: \(tunerData.pitch.measurement.value, specifier: "%.1f") Hz")
-                Text("Note: \(tunerData.closestNote.note.names) \(tunerData.closestNote.octave)")
-                Text("Harmonics: \(tunerData.harmonics)")
+                Text("Target: \(viewModel.targetFrequencyString)")
+                Text("Actual: \(viewModel.actualFrequencyString)")
+                Text("Note: \(viewModel.noteNameString) \(viewModel.octave)")
+                Text("Harmonics: \(viewModel.harmonicsString)")
             }
             
             Spacer()
@@ -58,9 +46,7 @@ struct TunerView: View {
 struct TunerView_Previews: PreviewProvider {
     static var previews: some View {
         TunerView(
-            tunerData: TunerData(),
-            modifierPreference: .preferSharps,
-            selectedTransposition: 0
+            viewModel: TunerViewModel()
         )
     }
 }
