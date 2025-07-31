@@ -11,6 +11,9 @@ class ReadingPassageViewModel: ObservableObject {
     @Published var showResult = false
     @Published var promptRerecord = false
     @Published var calculatedF0: Double?
+    @Published var pitchStdDev: Double?
+    @Published var pitchMin: Double?
+    @Published var pitchMax: Double?
     @Published var elapsedTime: TimeInterval = 0
     @Published var smoothedPitch: Double = 0
     @Published var wavePhase = 0.0
@@ -29,7 +32,7 @@ class ReadingPassageViewModel: ObservableObject {
     let minSampleCount: Int = 12
     private let pitchSmoothingFactor: Double = 0.1
 
-    private var profileManager: UserProfileManager
+    @ObservedObject var profileManager: UserProfileManager
 
     init(profileManager: UserProfileManager) {
         self.profileManager = profileManager
@@ -97,8 +100,11 @@ class ReadingPassageViewModel: ObservableObject {
         let statsCalculator = StatisticsCalculator()
         let filteredSamples = statsCalculator.removeOutliers(from: pitchSamples)
 
-        if let median = statsCalculator.calculateStatistics(for: filteredSamples)?.median {
-            calculatedF0 = median
+        if let stats = statsCalculator.calculateStatistics(for: filteredSamples) {
+            calculatedF0 = stats.median
+            pitchMin = stats.min
+            pitchMax = stats.max
+            pitchStdDev = stats.stdDev
             showResult = true
 
             profileManager.addSession(

@@ -67,6 +67,55 @@ class UserProfileManager: ObservableObject {
         currentProfile.analytics.totalSessionCount = currentProfile.sessions.count
         currentProfile.analytics.totalDuration = currentProfile.sessions.reduce(0) { $0 + $1.duration }
         currentProfile.lastActive = Date()
+        currentProfile.analytics.streakDays = calculateStreak()
+    }
+
+    func calculateStreak() -> Int {
+        guard !currentProfile.sessions.isEmpty else { return 0 }
+
+        let calendar = Calendar.current
+        let today = calendar.startOfDay(for: Date())
+
+        let sortedSessions = currentProfile.sessions.sorted { $0.timestamp > $1.timestamp }
+
+        var streak = 0
+        var lastStreakDate: Date?
+
+        let uniqueDays = Set(sortedSessions.map { calendar.startOfDay(for: $0.timestamp) })
+        let sortedUniqueDays = Array(uniqueDays).sorted { $0 > $1 }
+
+        for day in sortedUniqueDays {
+            if let lastDate = lastStreakDate {
+                let difference = calendar.dateComponents([.day], from: day, to: lastDate).day
+                if difference == 1 {
+                    streak += 1
+                } else if difference == 0 {
+                    // Same day, do nothing
+                } else {
+                    break // Streak is broken
+                }
+            } else {
+                // First session
+                if calendar.isDateInToday(day) || calendar.isDateInYesterday(day) {
+                    streak = 1
+                } else {
+                    break // Not recent enough to start a streak
+                }
+            }
+            lastStreakDate = day
+        }
+
+        // If the most recent session is not today, and the streak is ongoing,
+        // but the last session was yesterday, the streak is still valid.
+        if let firstDay = sortedUniqueDays.first, !calendar.isDateInToday(firstDay) {
+            // if it wasn't yesterday, the streak is broken
+             if !calendar.isDateInYesterday(firstDay) {
+                 return 0
+             }
+        }
+
+
+        return streak
     }
 
     func resetProfile() {

@@ -4,12 +4,14 @@ struct ReadingPassage: Identifiable {
     let id = UUID()
     let title: String
     let text: String
+    let skillFocus: String
 }
 
 extension ReadingPassage {
     static let passages: [ReadingPassage] = [
         ReadingPassage(
             title: "Rainbows and Light",
+            skillFocus: "Clarity",
             text: """
             When the sunlight strikes raindrops in the air, they act as a prism and form a rainbow. The rainbow is a division of white light into many beautiful colors. These take the shape of a long round arch, with its path high above, and its two ends apparently beyond the horizon.
 
@@ -20,6 +22,7 @@ extension ReadingPassage {
         ),
         ReadingPassage(
             title: "The Moon’s Mysteries",
+            skillFocus: "Storytelling",
             text: """
             The moon, a celestial beacon, has fascinated humanity since time immemorial. Its pale, luminous glow casts a serene light across the night sky, influencing tides and inspiring countless myths and legends. As it orbits the Earth, the moon goes through phases, from the slender crescent to the full, round brilliance that illuminates the darkness.
 
@@ -32,6 +35,7 @@ extension ReadingPassage {
         ),
         ReadingPassage(
             title: "The Art of Bread",
+            skillFocus: "Warmth",
             text: """
             Baking bread is an ancient craft, cherished across cultures and generations. First, gather your ingredients: flour, yeast, salt, and water. Mix them gently until a soft dough forms. Knead it thoroughly, pressing and folding, feeling it transform beneath your hands. As it rises, it doubles in size, the yeast working its magic, creating pockets of air that will give the bread its soft, airy texture.
 
@@ -42,6 +46,7 @@ extension ReadingPassage {
         ),
         ReadingPassage(
             title: "Dragons: Myths & Legends",
+            skillFocus: "Authority",
             text: """
             Dragons, majestic and mythical, have captivated imaginations for centuries. These legendary creatures, with scales that shimmer in the sunlight, wings that span the sky, and fiery breath, are both feared and revered. In tales of old, dragons guarded vast treasures, their lairs hidden in mountains or deep within enchanted forests.
 

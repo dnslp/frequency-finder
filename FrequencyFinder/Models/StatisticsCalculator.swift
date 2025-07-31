@@ -11,8 +11,8 @@ import Foundation
 final class StatisticsCalculator {
     /// Calculates statistics for a given array of pitches after removing outliers.
     /// - Parameter pitches: An array of pitches in Hz.
-    /// - Returns: A tuple containing the minimum, maximum, average, and median pitch, or `nil` if the input array is empty.
-    func calculateStatistics(for pitches: [Double]) -> (min: Double, max: Double, avg: Double, median: Double)? {
+    /// - Returns: A tuple containing the minimum, maximum, average, median, and standard deviation of the pitch, or `nil` if the input array is empty.
+    func calculateStatistics(for pitches: [Double]) -> (min: Double, max: Double, avg: Double, median: Double, stdDev: Double)? {
         let cleanedPitches = removeOutliers(from: pitches)
         guard !cleanedPitches.isEmpty else { return nil }
 
@@ -26,7 +26,10 @@ final class StatisticsCalculator {
             median = sorted[count / 2]
         }
 
-        return (sorted.first ?? 0, sorted.last ?? 0, avg, median)
+        let sumOfSquaredDifferences = sorted.map { pow($0 - avg, 2) }.reduce(0, +)
+        let stdDev = sqrt(sumOfSquaredDifferences / Double(count))
+
+        return (sorted.first ?? 0, sorted.last ?? 0, avg, median, stdDev)
     }
 
     /// Removes outliers from an array of pitches using the IQR method.
