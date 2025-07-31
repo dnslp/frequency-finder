@@ -1,223 +1,140 @@
-//
-//  ReadingPassageSessionView.swift
-//  FrequencyFinder
-//
-//  Created by David Nyman on 7/28/25.
-//
-
-
 import SwiftUI
-import Combine
-import MicrophonePitchDetector
 
 struct ReadingPassageSessionView: View {
-    @ObservedObject var profileManager: UserProfileManager
-    @StateObject private var pitchDetector = MicrophonePitchDetector()
-    
-    @State private var wavePhase = 0.0
-    @State private var waveTimer: Timer?
+    @StateObject private var viewModel: ReadingPassageViewModel
 
-    @State private var isRecording = false
-    @State private var pitchSamples: [Double] = []
-    @State private var startTime: Date?
-    @State private var pitchTimer: Timer?
-
-    @State private var showResult = false
-    @State private var promptRerecord = false
-    @State private var calculatedF0: Double?
-    @State private var duration: TimeInterval = 0
-
-    @State private var selectedPassageIndex = 0
-    @State private var fontSize: CGFloat = 16
-    @State private var selectedFont: String = "System"
-
-    let availableFonts = ["System", "Times New Roman", "Georgia", "Helvetica", "Verdana"]
-
-    // Validation thresholds
-    let minSessionDuration: TimeInterval = 6.0   // seconds
-    let minSampleCount: Int = 12                 // samples (if using 0.5s intervals)
-
-    @State private var smoothedPitch: Double = 0
-    @State private var pitchSmoothingFactor: Double = 0.1  // 0.0 = no smoothing, 1.0 = instant jump
-    
-    @State private var elapsedTime: TimeInterval = 0
-    @State private var elapsedTimer: Timer?
-    
-    func formatTime(_ seconds: TimeInterval) -> String {
-        let mins = Int(seconds) / 60
-        let secs = Int(seconds) % 60
-        return String(format: "%02d:%02d", mins, secs)
+    init(profileManager: UserProfileManager) {
+        _viewModel = StateObject(wrappedValue: ReadingPassageViewModel(profileManager: profileManager))
     }
 
-    
     var body: some View {
         VStack(spacing: 24) {
             Text("📖 Reading Analysis")
                 .font(.title2)
                 .bold()
 
-            TabView(selection: $selectedPassageIndex) {
-                ForEach(passages.indices, id: \.self) { index in
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text(passages[index].title)
-                                .font(Font.custom(selectedFont, size: fontSize + 2).weight(.bold))
-                            Text(passages[index].text)
-                                .font(Font.custom(selectedFont, size: fontSize))
-                                .multilineTextAlignment(.leading)
-                        }
-                        .padding()
-                    }
-                    .tag(index)
-                }
-            }
-            .tabViewStyle(.page(indexDisplayMode: .automatic))
-            .frame(height: 300)
+            PassageSelectionView(viewModel: viewModel)
 
-            HStack {
-                Button(action: {
-                    if selectedPassageIndex > 0 {
-                        selectedPassageIndex -= 1
-                    }
-                }) {
-                    Image(systemName: "arrow.left")
-                }
-                .disabled(selectedPassageIndex == 0)
+            PassageTextView(viewModel: viewModel)
 
-                Spacer()
+            RecordingControlsView(viewModel: viewModel)
 
-                Button(action: {
-                    if selectedPassageIndex < passages.count - 1 {
-                        selectedPassageIndex += 1
-                    }
-                }) {
-                    Image(systemName: "arrow.right")
-                }
-                .disabled(selectedPassageIndex == passages.count - 1)
-            }
-            .padding(.horizontal)
-
-            HStack {
-                Picker("Font", selection: $selectedFont) {
-                    ForEach(availableFonts, id: \.self) { font in
-                        Text(font).tag(font)
-                    }
-                }
-                .pickerStyle(.menu)
-
-                Stepper("Size: \(Int(fontSize))", value: $fontSize, in: 12...28)
-            }
-            .padding(.horizontal)
-
-
-            Button(isRecording ? "Stop Recording" : "Start Recording") {
-                isRecording ? stopRecording() : startRecording()
-            }
-            .padding()
-            .buttonStyle(.borderedProminent)
-
-            if isRecording {
-                Text("🎙️ Recording...").foregroundColor(.green)
-                Text("⏱ Elapsed: \(formatTime(elapsedTime))")
-                SineWaveView(
-                    frequency: max(0.5, min(smoothedPitch / 200, 6.0)), // normalized
-                    amplitude: 0.6,
-                    phase: wavePhase
-                )
-                .transition(.opacity)
-                .animation(.easeInOut, value: pitchDetector.pitch)
+            if viewModel.isRecording {
+                RecordingStatusView(viewModel: viewModel)
             }
 
-            if showResult, let f0 = calculatedF0 {
-                VStack(spacing: 8) {
-                    Text("Session Complete")
-                        .font(.headline)
-                    Text("Estimated f₀: \(f0, specifier: "%.1f") Hz")
-                        .foregroundColor(.secondary)
-                }
+            if viewModel.showResult {
+                ResultsView(viewModel: viewModel)
             }
 
-            if promptRerecord {
+            if viewModel.promptRerecord {
                 Text("Recording too short or invalid. Please try again.")
                     .foregroundColor(.red)
             }
         }
         .padding()
         .onDisappear {
-            pitchTimer?.invalidate()
+            viewModel.invalidateTimers()
         }
         .task {
-            do {
-                try await pitchDetector.activate()
-            } catch {
-                print("❌ Microphone error: \(error)")
-            }
+            viewModel.activatePitchDetector()
         }
     }
+}
 
-    func startRecording() {
-        pitchSamples.removeAll()
-        startTime = Date()
-        elapsedTime = 0
-        isRecording = true
-        promptRerecord = false
-        showResult = false
+struct PassageSelectionView: View {
+    @ObservedObject var viewModel: ReadingPassageViewModel
 
-        // Update visualizer phase
-        wavePhase = 0
-        waveTimer = Timer.scheduledTimer(withTimeInterval: 1/60, repeats: true) { _ in
-            wavePhase += 0.15
-        }
-
-        // Update pitch and smooth pitch
-        pitchTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { _ in
-            let pitch = pitchDetector.pitch
-            if pitch > 40 && pitch < 1000 {
-                pitchSamples.append(pitch)
-                smoothedPitch = smoothedPitch * (1 - pitchSmoothingFactor) + pitch * pitchSmoothingFactor
+    var body: some View {
+        HStack {
+            Picker("Passage", selection: $viewModel.selectedPassageIndex) {
+                ForEach(ReadingPassage.passages.indices, id: \.self) { index in
+                    Text(ReadingPassage.passages[index].title).tag(index)
+                }
             }
-        }
-
-        // Timer for elapsed time
-        elapsedTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
-            if let start = startTime {
-                elapsedTime = Date().timeIntervalSince(start)
-            }
+            .pickerStyle(.menu)
+            .disabled(viewModel.isRecording)
         }
     }
+}
 
-    func stopRecording() {
-        isRecording = false
-        pitchTimer?.invalidate()
-        pitchTimer = nil
-        duration = Date().timeIntervalSince(startTime ?? Date())
-        
-        waveTimer?.invalidate()
-        pitchTimer?.invalidate()
-        elapsedTimer?.invalidate()
-        waveTimer = nil
-        pitchTimer = nil
-        elapsedTimer = nil
+struct PassageTextView: View {
+    @ObservedObject var viewModel: ReadingPassageViewModel
 
-        // Validation checks
-        guard duration >= minSessionDuration, pitchSamples.count >= minSampleCount else {
-            promptRerecord = true
-            print("❗️ Not enough valid data: duration = \(duration), samples = \(pitchSamples.count)")
-            return
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                let passage = ReadingPassage.passages[viewModel.selectedPassageIndex]
+                Text(passage.title)
+                    .font(Font.custom(viewModel.selectedFont, size: viewModel.fontSize + 2).weight(.bold))
+                Text(passage.text)
+                    .font(Font.custom(viewModel.selectedFont, size: viewModel.fontSize))
+                    .multilineTextAlignment(.leading)
+            }
+            .padding()
         }
+        .frame(height: 300)
+    }
+}
 
-        let statsCalculator = StatisticsCalculator()
-        let filteredSamples = statsCalculator.removeOutliers(from: pitchSamples)
-        let median = filteredSamples.median()
+struct RecordingControlsView: View {
+    @ObservedObject var viewModel: ReadingPassageViewModel
 
-        calculatedF0 = median
-        showResult = true
+    var body: some View {
+        VStack {
+            HStack {
+                Picker("Font", selection: $viewModel.selectedFont) {
+                    ForEach(viewModel.availableFonts, id: \.self) { font in
+                        Text(font).tag(font)
+                    }
+                }
+                .pickerStyle(.menu)
+                .disabled(viewModel.isRecording)
 
-        profileManager.addSession(
-            type: .readingAnalysis,
-            pitchSamples: filteredSamples,
-            duration: duration,
-            notes: passages[selectedPassageIndex].title
-        )
+                Stepper("Size: \(Int(viewModel.fontSize))", value: $viewModel.fontSize, in: 12...28)
+                    .disabled(viewModel.isRecording)
+            }
+            .padding(.horizontal)
+
+            Button(viewModel.isRecording ? "Stop Recording" : "Start Recording") {
+                viewModel.isRecording ? viewModel.stopRecording() : viewModel.startRecording()
+            }
+            .padding()
+            .buttonStyle(.borderedProminent)
+        }
+    }
+}
+
+struct RecordingStatusView: View {
+    @ObservedObject var viewModel: ReadingPassageViewModel
+
+    var body: some View {
+        VStack {
+            Text("🎙️ Recording...").foregroundColor(.green)
+            Text("⏱ Elapsed: \(viewModel.formatTime(viewModel.elapsedTime))")
+            SineWaveView(
+                frequency: max(0.5, min(viewModel.smoothedPitch / 200, 6.0)), // normalized
+                amplitude: 0.6,
+                phase: viewModel.wavePhase
+            )
+            .transition(.opacity)
+            .animation(.easeInOut, value: viewModel.smoothedPitch)
+        }
+    }
+}
+
+struct ResultsView: View {
+    @ObservedObject var viewModel: ReadingPassageViewModel
+
+    var body: some View {
+        VStack(spacing: 8) {
+            Text("Session Complete")
+                .font(.headline)
+            if let f0 = viewModel.calculatedF0 {
+                Text("Passage: \(ReadingPassage.passages[viewModel.selectedPassageIndex].title)")
+                Text("Estimated f₀: \(f0, specifier: "%.1f") Hz")
+                    .foregroundColor(.secondary)
+            }
+        }
     }
 }
