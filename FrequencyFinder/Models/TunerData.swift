@@ -77,7 +77,7 @@ final class TunerData: ObservableObject {
         recorder.clearRecording()
     }
 
-    func calculateStatistics() -> (min: Double, max: Double, avg: Double, median: Double)? {
+    func calculateStatistics() -> (min: Double, max: Double, avg: Double, median: Double, stdDev: Double)? {
         statisticsCalculator.calculateStatistics(for: recorder.recordedPitches)
     }
 }

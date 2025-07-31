@@ -74,7 +74,6 @@ class UserProfileManager: ObservableObject {
         guard !currentProfile.sessions.isEmpty else { return 0 }
 
         let calendar = Calendar.current
-        let today = calendar.startOfDay(for: Date())
 
         let sortedSessions = currentProfile.sessions.sorted { $0.timestamp > $1.timestamp }
 
