@@ -123,4 +123,16 @@ class ReadingPassageViewModel: ObservableObject {
         let secs = Int(seconds) % 60
         return String(format: "%02d:%02d", mins, secs)
     }
+
+    func goToNextPassage() {
+        if selectedPassageIndex < ReadingPassage.passages.count - 1 {
+            selectedPassageIndex += 1
+        }
+    }
+
+    func goToPreviousPassage() {
+        if selectedPassageIndex > 0 {
+            selectedPassageIndex -= 1
+        }
+    }
 }

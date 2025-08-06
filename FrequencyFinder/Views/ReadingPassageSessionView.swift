@@ -16,8 +16,7 @@ struct ReadingPassageSessionView: View {
                 // Scrollable content
                 ScrollView {
                     VStack(spacing: 24) {
-                        CardView { PassageSelectionView(viewModel: viewModel) }
-                        CardView { PassageTextView(viewModel: viewModel) }
+                        CardView { PassageNavigatorView(viewModel: viewModel) }
 
                         if viewModel.isRecording {
                             CardView { RecordingStatusView(viewModel: viewModel) }
@@ -79,65 +78,6 @@ struct CardView<Content: View>: View {
             .background(Color(.secondarySystemBackground))
             .cornerRadius(16)
             .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-    }
-}
-
-// MARK: - Passage Picker
-struct PassageSelectionView: View {
-    @ObservedObject var viewModel: ReadingPassageViewModel
-    var body: some View {
-        Picker("Passage", selection: $viewModel.selectedPassageIndex) {
-            ForEach(ReadingPassage.passages.indices, id: \.self) { idx in
-                Text(ReadingPassage.passages[idx].title).tag(idx)
-            }
-        }
-        .pickerStyle(.menu)
-        .disabled(viewModel.isRecording)
-    }
-}
-
-// MARK: - Passage Display with Fade Effect
-struct PassageTextView: View {
-    @ObservedObject var viewModel: ReadingPassageViewModel
-    var body: some View {
-        let p = ReadingPassage.passages[viewModel.selectedPassageIndex]
-        ZStack(alignment: .bottom) {
-            ScrollView {
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Text(p.title)
-                            .font(Font.custom(viewModel.selectedFont, size: viewModel.fontSize + 4).weight(.semibold))
-                        Spacer()
-                        Text(p.skillFocus)
-                            .font(.caption2.bold())
-                            .padding(6)
-                            .background(Color.accentColor.opacity(0.2))
-                            .cornerRadius(8)
-                    }
-                    Text(p.text)
-                        .font(Font.custom(viewModel.selectedFont, size: viewModel.fontSize))
-                        .lineSpacing(viewModel.fontSize * 0.2)
-                        .multilineTextAlignment(.leading)
-                }
-                .padding()
-            }
-            .frame(height: 300)
-            .clipped()
-
-            // Fade overlay
-            Rectangle()
-                .fill(
-                    LinearGradient(
-                        gradient: Gradient(stops: [
-                            .init(color: Color.clear, location: 0),
-                            .init(color: Color(.secondarySystemBackground), location: 1)
-                        ]),
-                        startPoint: .top, endPoint: .bottom
-                    )
-                )
-                .frame(height: 60)
-                .allowsHitTesting(false)
-        }
     }
 }
 
