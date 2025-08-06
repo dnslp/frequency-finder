@@ -13,7 +13,7 @@ struct PassageNavigatorView: View {
     var body: some View {
         let passage = ReadingPassage.passages[viewModel.selectedPassageIndex]
 
-        return ZStack {
+        ZStack {
             HStack {
                 Rectangle()
                     .fill(Color.clear)
