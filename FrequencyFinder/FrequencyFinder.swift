@@ -2,7 +2,11 @@ import SwiftUI
 
 @main
 struct FrequencyFinderApp: App {
-    @StateObject private var profileManager = UserProfileManager()
+  // 2) Annotate the property’s type explicitly
+  @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate: AppDelegate
+
+  @StateObject private var profileManager = UserProfileManager()
+
     @State private var showOnboarding = false
 
     var body: some Scene {
