@@ -10,7 +10,8 @@ import SwiftUI
 
 struct ProfileView: View {
     @ObservedObject var profileManager: UserProfileManager
-      @Binding var showOnboarding: Bool
+    @ObservedObject var spotifyManager: SpotifyManager
+    @Binding var showOnboarding: Bool
 
     var profile: UserProfile {
         profileManager.currentProfile
@@ -105,6 +106,18 @@ struct ProfileView: View {
                         profileManager.resetProfile()
                     } label: {
                         Text("Reset Profile")
+                    }
+                }
+
+                Section(header: Text("🎵 Spotify")) {
+                    if let username = spotifyManager.username {
+                        Text("Connected as \(username)")
+                    } else if spotifyManager.accessToken != nil {
+                        Text("Connected to Spotify")
+                    } else {
+                        Button("Connect to Spotify") {
+                            spotifyManager.connect()
+                        }
                     }
                 }
             }
