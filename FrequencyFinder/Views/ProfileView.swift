@@ -119,70 +119,72 @@ struct ProfileView: View {
                 }
                 // Add this debug section to your ProfileView.swift
                 // Place it right before the Spotify Profile Section
+                // Replace your existing debug section in ProfileView.swift with this:
 
-                Section(header: Text("🐛 Debug Info")) {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("App Delegate Available: \(appDelegate != nil ? "✅" : "❌")")
-                        Text("Has Access Token: \(!(appDelegate?.appRemote.connectionParameters.accessToken?.isEmpty ?? true) ? "✅" : "❌")")
-                        
-                        if let token = appDelegate?.appRemote.connectionParameters.accessToken {
-                            Text("Token Preview: \(String(token.prefix(10)))...")
-                                .font(.caption)
+                Section(header: Text("🐛 Enhanced Debug Info")) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Button("🔍 Full Debug State") {
+                            appDelegate?.debugSpotifyState()
                         }
+                        .foregroundColor(.blue)
                         
-                        Text("Remote Connected: \(appDelegate?.appRemote.isConnected == true ? "✅" : "❌")")
-                        
-                        Button("Test Connection") {
-                            print("🔬 Manual connection test...")
-                   
+                        Button("🔄 Force Re-authentication") {
+                            appDelegate?.forceSpotifyReauth()
                         }
-                        .font(.caption)
+                        .foregroundColor(.orange)
                         
-                        Button("Clear Token") {
-                            UserDefaults.standard.removeObject(forKey: "SpotifyAccessToken")
-                            spotifyManager.clearData()
-                            print("🗑️ Cleared stored token")
+                        Button("🧪 Test Spotify App") {
+                            if let spotifyURL = URL(string: "spotify://") {
+                                if UIApplication.shared.canOpenURL(spotifyURL) {
+                                    UIApplication.shared.open(spotifyURL)
+                                    print("✅ Opened Spotify app")
+                                } else {
+                                    print("❌ Cannot open Spotify app - not installed?")
+                                }
+                            }
                         }
-                        .font(.caption)
-                        .foregroundColor(.red)
+                        .foregroundColor(.green)
+                        
+                        Button("📋 Copy Debug Info") {
+                            let debugInfo = """
+                            Client ID: \(appDelegate?.clientID ?? "none")
+                            Has Session Manager: \(appDelegate?.sessionManager != nil)
+                            Has App Remote: \(appDelegate?.appRemote != nil)
+                            Is Connected: \(appDelegate?.appRemote?.isConnected ?? false)
+                            Has Token: \(!(appDelegate?.appRemote.connectionParameters.accessToken?.isEmpty ?? true))
+                            """
+                            UIPasteboard.general.string = debugInfo
+                            print("📋 Debug info copied to clipboard")
+                        }
+                        .foregroundColor(.purple)
+                        
+                        Divider()
+                        
+                        // Current state display
+                        Text("Current State:")
+                            .font(.headline)
+                        Text("Session Manager: \(appDelegate?.sessionManager != nil ? "✅" : "❌")")
+                        Text("App Remote: \(appDelegate?.appRemote != nil ? "✅" : "❌")")
+                        Text("Connected: \(appDelegate?.appRemote?.isConnected == true ? "✅" : "❌")")
+                        Text("Has Token: \(!(appDelegate?.appRemote.connectionParameters.accessToken?.isEmpty ?? true) ? "✅" : "❌")")
+                        
+                        if let spotifyURL = URL(string: "spotify://") {
+                            Text("Can Open Spotify: \(UIApplication.shared.canOpenURL(spotifyURL) ? "✅" : "❌")")
+                        }
+                    }
+                }
+                Section(header: Text("🎵 Enhanced Spotify")) {
+                    NavigationLink(destination: EnhancedSpotifyView()) {
+                        HStack {
+                            Image(systemName: "music.note.list")
+                            Text("View Spotify Data")
+                        }
                     }
                 }
                 // MARK: - Spotify Profile Section
                 Section(header: Text("🎵 Spotify Profile")) {
-                                 // 1) No token? show Connect button
-                                 if appDelegate?.appRemote.connectionParameters.accessToken?.isEmpty ?? true {
-                                     Button("Connect to Spotify") {
-                                       print("🔘 Connect tapped")
-                                       appDelegate?.startSpotifyLogin()
-                                     }
-
-                                 // 2) Token exists, loading profile
-                                 } else if spotifyManager.profile == nil && spotifyManager.errorMessage == nil {
-                                     HStack {
-                                         ProgressView()
-                                         Text("Loading profile…")
-                                     }
-                                     .onAppear {
-                                         // Force-unwrap here is safe because we know token isn't empty
-                                         let token = appDelegate!.appRemote.connectionParameters.accessToken!
-                                         spotifyManager.fetchUserProfile(accessToken: token)
-                                     }
-
-                                 // 3) Fetch error
-                                 } else if let err = spotifyManager.errorMessage {
-                                     Text("Error loading: \(err)")
-                                         .foregroundColor(.red)
-
-                                 // 4) Successfully loaded profile
-                                 } else if let sProfile = spotifyManager.profile {
-                                     Text("Name: \(sProfile.display_name ?? sProfile.id)")
-                                     if let email = sProfile.email {
-                                         Text(email)
-                                             .font(.subheadline)
-                                             .foregroundColor(.secondary)
-                                     }
-                                 }
-                             }
+                    SimpleSpotifyView()
+                }
                          }
                          .navigationTitle("User Profile")
             .onAppear {

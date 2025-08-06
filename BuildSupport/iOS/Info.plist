@@ -18,6 +18,7 @@
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
+	<!-- ✅ FIXED: Correct URL scheme for Spotify callback -->
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -25,12 +26,13 @@
 			<string>DNSLP.FrequencyFinder.spotify</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.dnslp.frequencyfinder</string>
+				<string>frequencyfinder</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<!-- ✅ CORRECT: This part is already correct -->
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>spotify</string>
