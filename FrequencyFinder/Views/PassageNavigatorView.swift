@@ -13,7 +13,7 @@ struct PassageNavigatorView: View {
     var body: some View {
         let passage = ReadingPassage.passages[viewModel.selectedPassageIndex]
 
-        ZStack {
+        return ZStack {
             HStack {
                 Rectangle()
                     .fill(Color.clear)
@@ -116,7 +116,7 @@ struct PassageNavigatorView: View {
                             Button(action: { scrollSpeed = max(10, scrollSpeed - 10) }) {
                                 Image(systemName: "minus")
                             }
-                            Text("\(Int(scrollSpeed))")
+                            Text("\(Int(scroll_speed))")
                             Button(action: { scrollSpeed = min(200, scrollSpeed + 10) }) {
                                 Image(systemName: "plus")
                             }
@@ -152,8 +152,10 @@ struct PassageNavigatorView: View {
                 }
         )
     }
+}
 
-    private func startAutoScroll() {
+private extension PassageNavigatorView {
+    func startAutoScroll() {
         stopAutoScroll() // Ensure no existing timer is running
         let scrollViewHeight = 300.0
         let scrollableHeight = max(0, scrollContentSize.height - scrollViewHeight)
@@ -176,7 +178,7 @@ struct PassageNavigatorView: View {
         }
     }
 
-    private func stopAutoScroll() {
+    func stopAutoScroll() {
         autoScrollTimer?.invalidate()
         autoScrollTimer = nil
     }
