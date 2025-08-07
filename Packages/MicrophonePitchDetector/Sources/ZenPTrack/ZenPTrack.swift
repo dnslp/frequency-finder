@@ -113,11 +113,32 @@ public struct ZenPTrack {
             pos = 0
         }
 
+        // Bounds checking for safety - this is the likely crash point
+        guard pos < signal.count else {
+            print("❌ ZenPTrack bounds error: pos=\(pos) >= signal.count=\(signal.count), hopsize=\(hopsize), cnt=\(cnt)")
+            print("❌ Arrays: signal.count=\(signal.count), spec1.count=\(spec1.count), spec2.count=\(spec2.count)")
+            pitch = cps
+            // Safe amplitude calculation
+            if histcnt >= 0 && histcnt < dbs.count {
+                amplitude = exp(dbs[histcnt] / 20.0 * log(10.0))
+            } else {
+                amplitude = 0.0
+            }
+            return
+        }
+
         signal[pos] = bufferValue * 32768.0
         pos += 1
 
         pitch = cps
-        amplitude = exp(dbs[histcnt] / 20.0 * log(10.0))
+        
+        // Bounds check for dbs array access
+        if histcnt >= 0 && histcnt < dbs.count {
+            amplitude = exp(dbs[histcnt] / 20.0 * log(10.0))
+        } else {
+            print("❌ ZenPTrack dbs bounds error: histcnt=\(histcnt) >= dbs.count=\(dbs.count)")
+            amplitude = 0.0
+        }
 
         cnt = pos
     }
