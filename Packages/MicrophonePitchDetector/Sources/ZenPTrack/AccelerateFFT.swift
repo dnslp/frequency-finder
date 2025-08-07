@@ -23,12 +23,16 @@ public final class AccelerateFFT {
     ///   - M: Log2 of FFT size (matches ZenFFT parameter)
     ///   - size: FFT size (matches ZenFFT parameter, used for buffer allocation)
     public init(M: Int, size: Double) {
+        print("🔍 AccelerateFFT Debug: M=", M, "size=", size)
+        
         self.logSize = M
         self.fftSize = 1 << M
         
+        print("🔍 AccelerateFFT Debug: logSize=", logSize, "fftSize=", fftSize)
+        
         // Create FFT setup for complex-to-complex transform
         guard let setup = vDSP_create_fftsetup(vDSP_Length(M), FFTRadix(kFFTRadix2)) else {
-            fatalError("Failed to create vDSP FFT setup")
+            fatalError("Failed to create vDSP FFT setup with M=\(M)")
         }
         self.fftSetup = setup
         

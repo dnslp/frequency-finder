@@ -66,7 +66,23 @@ public struct ZenPTrack {
 
         precondition(winsize.isPowerOfTwo)
 
-        let powtwo = Int(log2(Double(winsize)))
+        let log2Value = log2(Double(winsize))
+        print("🔍 ZenPTrack Debug: hopsize=", hopsize, "winsize=", winsize, "log2=", log2Value)
+        
+        // Safety check for log2 calculation
+        guard log2Value.isFinite && log2Value > 0 else {
+            print("❌ Invalid log2Value:", log2Value, "for winsize:", winsize)
+            fatalError("Invalid winsize produces invalid log2")
+        }
+        
+        let powtwo = Int(log2Value)
+        print("🔍 ZenPTrack Debug: powtwo=", powtwo, "M will be=", powtwo - 1)
+        
+        // Safety check for M parameter
+        guard powtwo > 0 else {
+            print("❌ Invalid powtwo:", powtwo)
+            fatalError("Invalid powtwo would produce invalid M")
+        }
 
         // Use the new FFT processor with configurable implementation
         fft = FFTProcessor(M: powtwo - 1, size: size, implementation: FFTConfiguration.defaultImplementation)

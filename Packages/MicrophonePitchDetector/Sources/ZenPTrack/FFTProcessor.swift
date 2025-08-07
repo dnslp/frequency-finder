@@ -86,12 +86,15 @@ public struct FFTConfiguration {
         print("🚀 FFT Implementation Performance")
         print("=================================")
         
-        let results = FFTProcessor.performanceComparison()
-        
-        print(String(format: "Accelerate: %.2f ms", results.accelerate * 1000))
-        print(String(format: "ZenFFT:     %.2f ms", results.zen * 1000))
-        print(String(format: "Speedup:    %.1fx faster", results.speedup))
+        // Use a safer approach that doesn't rely on complex initialization
+        print("Performance logging temporarily disabled to prevent crashes")
         print(String(format: "Using:      %@", defaultImplementation == .accelerate ? "Accelerate" : "ZenFFT"))
         print()
+        
+        // TODO: Re-enable when initialization is stable
+        // let results = FFTProcessor.performanceComparison()
+        // print(String(format: "Accelerate: %.2f ms", results.accelerate * 1000))
+        // print(String(format: "ZenFFT:     %.2f ms", results.zen * 1000))
+        // print(String(format: "Speedup:    %.1fx faster", results.speedup))
     }
 }
