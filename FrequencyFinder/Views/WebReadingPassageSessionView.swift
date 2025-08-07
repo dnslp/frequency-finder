@@ -15,31 +15,14 @@ struct WebReadingPassageSessionView: View {
         NavigationStack {
             ZStack {
                 VStack(spacing: 0) {
-                    // Web content area
+                    // Web content area - takes most of the screen
                     WebViewWithNavigation(url: webURL, viewModel: viewModel)
                         .frame(maxHeight: .infinity)
                     
-//                    // Debug info display with manual refresh
-//                    DebugInfoCard(viewModel: viewModel)
-//                        .padding(.horizontal)
-//                        .onReceive(viewModel.objectWillChange) { _ in
-//                            print("🔄 DEBUG: Main view received objectWillChange notification")
-//                        }
-//                        .onTapGesture {
-//                            print("🔄 DEBUG: Manual tap test - forcing ViewModel update")
-//                            viewModel.objectWillChange.send()
-//                        }
-//                        .onLongPressGesture {
-//                            print("🧪 DEBUG: Manual URL test with parameters")
-//                            viewModel.parseURLParameters(from: "https://dnslp.github.io/reading-passage/?passageId=test-passage&chunk=2")
-//                        }
-                    
-                    // Recording UI overlay
+                    // Results and error overlay - minimal space usage
                     VStack(spacing: 16) {
-                        if viewModel.isRecording {
-                            RecordingStatusCard(viewModel: viewModel)
-                        } else if viewModel.showResult {
-                            WebResultsCard(viewModel: viewModel)
+                        if viewModel.showResult {
+                            DismissibleResultsCard(viewModel: viewModel)
                                 .onAppear { UINotificationFeedbackGenerator().notificationOccurred(.success) }
                         }
                         
@@ -52,23 +35,12 @@ struct WebReadingPassageSessionView: View {
                     }
                     .padding(.horizontal)
                     
-                    Spacer(minLength: 0)
-                    
                     // Recording controls at bottom - only show if passageId exists
-                    Group {
-                        if viewModel.hasPassageId {
-                            WebRecordingControls(viewModel: viewModel, isPressed: $isRecordButtonPressed)
-                                .padding()
-                                .onAppear {
-                                    print("🎯 DEBUG: Recording controls appeared - hasPassageId=\(viewModel.hasPassageId)")
-                                }
-                        } else {
-                            Color.clear
-                                .frame(height: 1)
-                                .onAppear {
-                                    print("❌ DEBUG: Recording controls hidden - hasPassageId=\(viewModel.hasPassageId)")
-                                }
+                    if viewModel.hasPassageId {
+                        CardView {
+                            WebRecordingControlsView(viewModel: viewModel, isPressed: $isRecordButtonPressed)
                         }
+                        .padding()
                     }
                 }
                 
@@ -99,6 +71,7 @@ struct WebReadingPassageSessionView: View {
     }
 }
 
+
 // MARK: - Enhanced WebView with Navigation Tracking
 struct WebViewWithNavigation: UIViewRepresentable {
     let url: URL
@@ -106,7 +79,7 @@ struct WebViewWithNavigation: UIViewRepresentable {
     
     func makeUIView(context: Context) -> WKWebView {
         let webView = WKWebView()
-        webView.navigationDelegate = viewModel
+        webView.navigationDelegate = viewModel.navigationDelegate
         return webView
     }
     
@@ -135,114 +108,171 @@ struct WebViewWithNavigation: UIViewRepresentable {
     }
 }
 
-// MARK: - Recording Status Card
-struct RecordingStatusCard: View {
-    @ObservedObject var viewModel: WebReadingPassageViewModel
-    
-    var body: some View {
-        VStack(spacing: 12) {
-            Text("🎙️ Recording...")
-                .foregroundColor(.green)
-            Text("⏱ Elapsed: \(viewModel.formatTime(viewModel.elapsedTime))")
-            GradientProgressBar(progress: min(viewModel.elapsedTime / viewModel.minSessionDuration, 1.0))
-                .frame(height: 8)
-                .padding(.horizontal)
-            SineWaveView(frequency: max(0.5, min(viewModel.smoothedPitch / 200, 6.0)),
-                         amplitude: 0.6,
-                         phase: viewModel.wavePhase)
-                .transition(.opacity)
-        }
-        .padding()
-        .background(Color(.secondarySystemBackground))
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
-    }
-}
 
-// MARK: - Web Results Card  
-struct WebResultsCard: View {
+// MARK: - Dismissible Results Card
+struct DismissibleResultsCard: View {
     @ObservedObject var viewModel: WebReadingPassageViewModel
     
     var body: some View {
-        VStack(spacing: 16) {
-            Text("Session Complete 🎉").font(.title3.weight(.semibold))
-            Text("URL: \(viewModel.currentURL)")
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .lineLimit(2)
-            
-            if let f0 = viewModel.calculatedF0,
-               let stdDev = viewModel.pitchStdDev,
-               let minP = viewModel.pitchMin,
-               let maxP = viewModel.pitchMax {
-                VStack(spacing: 8) {
-                    Text("Average Pitch (f₀): \(f0, specifier: "%.1f") Hz")
-                    Divider()
-                    Text("Pitch Stability: \(stdDev, specifier: "%.1f") Hz")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                    Divider()
-                    Text("Pitch Range: \(minP, specifier: "%.1f") - \(maxP, specifier: "%.1f") Hz")
-                        .font(.caption2)
+        CardView {
+            VStack(spacing: 16) {
+                // Header with close button
+                HStack {
+                    Text("Session Complete 🎉")
+                        .font(.title3.weight(.semibold))
+                    Spacer()
+                    Button {
+                        withAnimation(.easeInOut) {
+                            viewModel.resetResults()
+                        }
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.title2)
+                            .foregroundColor(.gray)
+                    }
+                }
+                
+                if let passageId = viewModel.passageId {
+                    Text("Passage: \(passageId)")
+                        .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
+                
+                if let f0 = viewModel.calculatedF0,
+                   let stdDev = viewModel.pitchStdDev,
+                   let minP = viewModel.pitchMin,
+                   let maxP = viewModel.pitchMax {
+                    VStack(spacing: 8) {
+                        Text("Average Pitch (f₀): \(f0, specifier: "%.1f") Hz")
+                            .font(.body)
+                        Divider()
+                        Text("Pitch Stability: \(stdDev, specifier: "%.1f") Hz")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                        Divider()
+                        Text("Pitch Range: \(minP, specifier: "%.1f") - \(maxP, specifier: "%.1f") Hz")
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                    }
+                    .padding()
+                    .background(Color(.systemBackground))
+                    .cornerRadius(12)
+                    .shadow(radius: 2)
+                }
+                
+                // Record again button
+                Button("Record Again") {
+                    withAnimation(.easeInOut) {
+                        viewModel.resetResults()
+                    }
+                }
+                .font(.headline)
                 .padding()
-                .background(Color(.systemBackground))
+                .frame(maxWidth: .infinity)
+                .background(Color.accentColor)
+                .foregroundColor(.white)
                 .cornerRadius(12)
-                .shadow(radius: 2)
             }
         }
-        .padding()
-        .background(Color(.secondarySystemBackground))
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+        .transition(.move(edge: .top).combined(with: .opacity))
     }
 }
 
-// MARK: - Web Recording Controls
-struct WebRecordingControls: View {
+
+// MARK: - Compact Recording Controls
+struct WebRecordingControlsView: View {
     @ObservedObject var viewModel: WebReadingPassageViewModel
     @Binding var isPressed: Bool
     
     var body: some View {
-        VStack(spacing: 16) {
-//            HStack(spacing: 16) {
-//                Picker("Font", selection: $viewModel.selectedFont) {
-//                    ForEach(viewModel.availableFonts, id: \.self) { font in
-//                        Text(font).tag(font)
-//                    }
-//                }
-//                .pickerStyle(.menu)
-//                .disabled(viewModel.isRecording)
-//
-//                Stepper(value: $viewModel.fontSize, in: 12...28) {
-//                    Text("Size: \(Int(viewModel.fontSize))")
-//                }
-//                .disabled(viewModel.isRecording)
-//            }
-            
-            Button(action: {
-                UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                isPressed.toggle()
-                if viewModel.isRecording { viewModel.stopRecording() } else { viewModel.startRecording() }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { isPressed.toggle() }
-            }) {
-                Text(viewModel.isRecording ? "Stop Recording" : "Start Recording")
-                    .font(.headline)
+        HStack(spacing: 12) {
+            if viewModel.isRecording {
+                // Left side: Timer with animated recording indicator
+                HStack(spacing: 8) {
+                    // Animated recording dot
+                    Circle()
+                        .fill(Color.red)
+                        .frame(width: 8, height: 8)
+                        .opacity(0.3)
+                        .scaleEffect(1.5)
+                        .animation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true), value: viewModel.isRecording)
+                    
+                    Text("⏱ \(viewModel.formatTime(viewModel.elapsedTime))")
+                        .font(.headline.monospacedDigit())
+                        .foregroundColor(.primary)
+                        .onAppear {
+                            print("🕐 DEBUG: Timer display appeared - elapsedTime: \(viewModel.elapsedTime)")
+                        }
+                    
+                    // Pitch detection indicator
+                    if viewModel.smoothedPitch > 50 {
+                        Circle()
+                            .fill(Color.green)
+                            .frame(width: 6, height: 6)
+                            .opacity(0.8)
+                            .scaleEffect(min(viewModel.smoothedPitch / 200, 2.0))
+                            .animation(.easeOut(duration: 0.1), value: viewModel.smoothedPitch)
+                    } else {
+                        Circle()
+                            .fill(Color.gray)
+                            .frame(width: 6, height: 6)
+                            .opacity(0.3)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .onReceive(viewModel.objectWillChange) { _ in
+                    print("🔄 DEBUG: Timer received update - elapsedTime: \(viewModel.elapsedTime), pitch: \(viewModel.smoothedPitch)")
+                }
+                
+                // Right side: Compact stop button
+                Button(action: stopRecording) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "stop.fill")
+                            .font(.subheadline)
+                        Text("Stop")
+                            .font(.headline)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(Color.red)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+                    .scaleEffect(isPressed ? 1.05 : 1.0)
+                }
+            } else {
+                // Full-width start recording button
+                Button(action: startRecording) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "mic.fill")
+                            .font(.title3)
+                        Text("Start Recording")
+                            .font(.headline)
+                    }
                     .frame(maxWidth: .infinity)
                     .padding()
-                    .background(viewModel.isRecording ? Color.red : Color.accentColor)
+                    .background(Color.accentColor)
                     .foregroundColor(.white)
                     .cornerRadius(12)
                     .scaleEffect(isPressed ? 1.05 : 1.0)
-                    .animation(.easeInOut(duration: 0.2), value: isPressed)
+                }
             }
-            .frame(minHeight: 44)
         }
-        .padding()
-        .background(Color(.secondarySystemBackground))
-        .cornerRadius(16)
-        .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+        .frame(minHeight: 44)
+        .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewModel.isRecording)
+    }
+    
+    private func startRecording() {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        isPressed.toggle()
+        viewModel.startRecording()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { isPressed.toggle() }
+    }
+    
+    private func stopRecording() {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        isPressed.toggle()
+        viewModel.stopRecording()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { isPressed.toggle() }
     }
 }
 

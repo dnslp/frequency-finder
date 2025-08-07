@@ -3,9 +3,7 @@ import Combine
 import MicrophonePitchDetector
 import WebKit
 
-class WebReadingPassageViewModel: NSObject, ObservableObject {
-    // Explicit objectWillChange publisher for debugging
-    let objectWillChange = PassthroughSubject<Void, Never>()
+class WebReadingPassageViewModel: ObservableObject {
     @Published var fontSize: CGFloat = 16
     @Published var selectedFont: String = "System"
     
@@ -16,8 +14,16 @@ class WebReadingPassageViewModel: NSObject, ObservableObject {
     @Published var pitchStdDev: Double?
     @Published var pitchMin: Double?
     @Published var pitchMax: Double?
-    @Published var elapsedTime: TimeInterval = 0
-    @Published var smoothedPitch: Double = 0
+    @Published var elapsedTime: TimeInterval = 0 {
+        didSet {
+            print("⏱️ DEBUG: elapsedTime updated to \(elapsedTime)")
+        }
+    }
+    @Published var smoothedPitch: Double = 0 {
+        didSet {
+            print("🎵 DEBUG: smoothedPitch updated to \(smoothedPitch)")
+        }
+    }
     @Published var wavePhase = 0.0
     @Published var currentURL: String = ""
     @Published var passageId: String? = nil
@@ -25,13 +31,11 @@ class WebReadingPassageViewModel: NSObject, ObservableObject {
     @Published var hasPassageId: Bool = false {
         didSet {
             print("📱 DEBUG: hasPassageId changed from \(oldValue) to \(hasPassageId)")
-            objectWillChange.send()
         }
     }
     @Published var debugInfo: String = "No URL loaded yet" {
         didSet {
             print("📝 DEBUG: debugInfo updated")
-            objectWillChange.send()
         }
     }
     
@@ -55,17 +59,22 @@ class WebReadingPassageViewModel: NSObject, ObservableObject {
     
     @ObservedObject var profileManager: UserProfileManager
     
+    // Navigation delegate for WebView
+    lazy var navigationDelegate = WebNavigationDelegate(viewModel: self)
+    
     init(profileManager: UserProfileManager) {
         self.profileManager = profileManager
-        super.init()
     }
     
     func activatePitchDetector() {
+        print("🎤 DEBUG: Attempting to activate pitch detector...")
         Task {
             do {
                 try await pitchDetector.activate()
+                print("✅ DEBUG: Pitch detector activated successfully")
             } catch {
-                print("❌ Microphone error: \(error)")
+                print("❌ DEBUG: Microphone activation failed: \(error)")
+                print("❌ DEBUG: Error details: \(error.localizedDescription)")
             }
         }
     }
@@ -99,12 +108,15 @@ class WebReadingPassageViewModel: NSObject, ObservableObject {
     }
     
     func startRecording() {
+        print("🎙️ DEBUG: Starting recording process...")
         pitchSamples.removeAll()
         startTime = Date()
         elapsedTime = 0
         isRecording = true
         promptRerecord = false
         showResult = false
+        
+        print("🎙️ DEBUG: Recording state set to true, starting timers...")
         
         wavePhase = 0
         waveTimer = Timer.scheduledTimer(withTimeInterval: 1/60, repeats: true) { [weak self] _ in
@@ -114,9 +126,14 @@ class WebReadingPassageViewModel: NSObject, ObservableObject {
         pitchTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             let pitch = self.pitchDetector.pitch
+            print("🎵 DEBUG: Raw pitch detected: \(pitch)")
+            
             if pitch > 40 && pitch < 1000 {
                 self.pitchSamples.append(pitch)
+                print("✅ DEBUG: Valid pitch added to samples: \(pitch) (total samples: \(self.pitchSamples.count))")
                 self.smoothedPitch = self.smoothedPitch * (1 - self.pitchSmoothingFactor) + pitch * self.pitchSmoothingFactor
+            } else {
+                print("❌ DEBUG: Invalid pitch rejected: \(pitch)")
             }
         }
         
@@ -125,16 +142,28 @@ class WebReadingPassageViewModel: NSObject, ObservableObject {
                 self?.elapsedTime = Date().timeIntervalSince(start)
             }
         }
+        
+        print("🎙️ DEBUG: All timers started, isRecording: \(isRecording)")
     }
     
     func stopRecording() {
+        print("🛑 DEBUG: Stopping recording...")
         isRecording = false
         invalidateTimers()
         duration = Date().timeIntervalSince(startTime ?? Date())
         
+        print("🛑 DEBUG: Recording stopped - Duration: \(duration)s, Samples collected: \(pitchSamples.count)")
+        print("🛑 DEBUG: Minimum duration required: \(minSessionDuration)s, Minimum samples: \(minSampleCount)")
+        
+        if pitchSamples.isEmpty {
+            print("❌ DEBUG: No pitch samples collected at all!")
+        } else {
+            print("✅ DEBUG: Sample range: \(pitchSamples.min() ?? 0) - \(pitchSamples.max() ?? 0) Hz")
+        }
+        
         guard duration >= minSessionDuration, pitchSamples.count >= minSampleCount else {
             promptRerecord = true
-            print("❗️ Not enough valid data: duration = \(duration), samples = \(pitchSamples.count)")
+            print("❗️ DEBUG: Not enough valid data: duration = \(duration), samples = \(pitchSamples.count)")
             return
         }
         
@@ -164,6 +193,16 @@ class WebReadingPassageViewModel: NSObject, ObservableObject {
         let mins = Int(seconds) / 60
         let secs = Int(seconds) % 60
         return String(format: "%02d:%02d", mins, secs)
+    }
+    
+    func resetResults() {
+        showResult = false
+        promptRerecord = false
+        calculatedF0 = nil
+        pitchStdDev = nil
+        pitchMin = nil
+        pitchMax = nil
+        print("🔄 DEBUG: Results reset - ready for new recording")
     }
     
     func parseURLParameters(from urlString: String) {
@@ -242,13 +281,21 @@ class WebReadingPassageViewModel: NSObject, ObservableObject {
     }
 }
 
-extension WebReadingPassageViewModel: WKNavigationDelegate {
+// MARK: - Navigation Delegate
+class WebNavigationDelegate: NSObject, WKNavigationDelegate {
+    weak var viewModel: WebReadingPassageViewModel?
+    
+    init(viewModel: WebReadingPassageViewModel) {
+        self.viewModel = viewModel
+        super.init()
+    }
+    
     func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
         if let url = webView.url?.absoluteString {
             print("🌐 DEBUG: WebView didCommit navigation to: \(url)")
             DispatchQueue.main.async {
-                self.currentURL = url
-                self.parseURLParameters(from: url)
+                self.viewModel?.currentURL = url
+                self.viewModel?.parseURLParameters(from: url)
             }
         } else {
             print("⚠️ DEBUG: WebView didCommit but no URL available")
@@ -258,13 +305,11 @@ extension WebReadingPassageViewModel: WKNavigationDelegate {
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         if let url = webView.url?.absoluteString {
             print("✅ DEBUG: WebView didFinish loading: \(url)")
-            // Re-parse in case URL changed after loading
             DispatchQueue.main.async {
-                self.currentURL = url
-                self.parseURLParameters(from: url)
+                self.viewModel?.currentURL = url
+                self.viewModel?.parseURLParameters(from: url)
             }
-            // Start monitoring for JavaScript URL changes
-            startURLMonitoring(webView: webView)
+            viewModel?.startURLMonitoring(webView: webView)
         }
     }
     
