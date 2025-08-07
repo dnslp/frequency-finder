@@ -1,5 +1,6 @@
 import SwiftUI
 import ZenPTrack
+import MicrophonePitchDetector
 
 struct FFTDebugView: View {
     @State private var currentImplementation = FFTConfiguration.defaultImplementation
@@ -58,16 +59,44 @@ struct FFTDebugView: View {
     }
     
     private func runPerformanceBenchmark() {
+        showPerformanceData = true
+        
         DispatchQueue.global(qos: .userInitiated).async {
-            let results = FFTProcessor.performanceComparison()
+            // Simple performance test without complex dependencies
+            let startAccelerate = CFAbsoluteTimeGetCurrent()
+            
+            // Test Accelerate implementation
+            let fftAccelerate = AccelerateFFT(M: 11, size: 1024.0)
+            var testDataAccelerate = Array(0..<2048).map { i in
+                Float(sin(2.0 * .pi * Double(i) / 2048.0))
+            }
+            
+            for _ in 0..<100 {
+                fftAccelerate.compute(buf: &testDataAccelerate)
+            }
+            let accelerateTime = CFAbsoluteTimeGetCurrent() - startAccelerate
+            
+            // Test ZenFFT implementation  
+            let startZen = CFAbsoluteTimeGetCurrent()
+            let fftZen = ZenFFT(M: 11, size: 1024.0)
+            var testDataZen = Array(0..<2048).map { i in
+                Float(sin(2.0 * .pi * Double(i) / 2048.0))
+            }
+            
+            for _ in 0..<100 {
+                fftZen.compute(buf: &testDataZen)
+            }
+            let zenTime = CFAbsoluteTimeGetCurrent() - startZen
+            
+            let speedup = zenTime / accelerateTime
             
             DispatchQueue.main.async {
                 print("🔬 FFT Performance Benchmark Results")
                 print("====================================")
-                print(String(format: "Accelerate: %.2f ms", results.accelerate * 1000))
-                print(String(format: "ZenFFT:     %.2f ms", results.zen * 1000))
-                print(String(format: "Speedup:    %.1fx", results.speedup))
-                print(String(format: "Winner:     %@", results.speedup > 1 ? "🚀 Accelerate" : "⚡ ZenFFT"))
+                print(String(format: "Accelerate: %.2f ms", accelerateTime * 1000))
+                print(String(format: "ZenFFT:     %.2f ms", zenTime * 1000))
+                print(String(format: "Speedup:    %.1fx", speedup))
+                print(String(format: "Winner:     %@", speedup > 1 ? "🚀 Accelerate" : "⚡ ZenFFT"))
             }
         }
     }
