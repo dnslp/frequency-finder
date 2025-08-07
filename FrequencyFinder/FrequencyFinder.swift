@@ -26,7 +26,7 @@ struct FrequencyFinderApp: App {
                         .tabItem {
                             Label("Reading", systemImage: "book")
                         }
-                    WebView(url: URL(string: "https://dnslp.github.io/reading-passage/")!)
+                    WebReadingPassageSessionView(profileManager: profileManager)
                         .tabItem {
                             Label("Reading", systemImage: "book.fill")
                         }
