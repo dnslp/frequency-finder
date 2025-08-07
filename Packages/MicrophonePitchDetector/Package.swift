@@ -6,7 +6,8 @@ let package = Package(
     name: "MicrophonePitchDetector",
     platforms: [.macOS(.v13), .iOS(.v16), .watchOS(.v9)],
     products: [
-        .library(name: "MicrophonePitchDetector", targets: ["MicrophonePitchDetector"])
+        .library(name: "MicrophonePitchDetector", targets: ["MicrophonePitchDetector"]),
+        .executable(name: "ffttest", targets: ["ffttest"])
     ],
     dependencies: [
         .package(
@@ -15,6 +16,10 @@ let package = Package(
         )
     ],
     targets: [
+        .executableTarget(
+            name: "ffttest",
+            dependencies: ["ZenPTrack"]
+        ),
         .executableTarget(
             name: "pitchbench",
             dependencies: ["PitchRecording"]

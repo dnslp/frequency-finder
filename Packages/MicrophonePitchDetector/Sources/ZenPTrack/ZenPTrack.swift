@@ -55,7 +55,7 @@ public struct ZenPTrack {
     fileprivate var histcnt = 0
     fileprivate var cps = 0.0
     fileprivate var dbs = Array(repeating: -144.0, count: 20)
-    fileprivate var fft: ZenFFT
+    fileprivate var fft: FFTProcessor
 
     public init(sampleRate: Double, hopSize: Double, peakCount: Int) {
         size = hopSize
@@ -68,7 +68,11 @@ public struct ZenPTrack {
 
         let powtwo = Int(log2(Double(winsize)))
 
-        fft = ZenFFT(M: powtwo - 1, size: size)
+        // Use the new FFT processor with configurable implementation
+        fft = FFTProcessor(M: powtwo - 1, size: size, implementation: FFTConfiguration.defaultImplementation)
+        
+        // Log performance comparison on first initialization
+        FFTConfiguration.logPerformanceIfNeeded()
         signal = Array(repeating: 0, count: hopsize)
         prev = Array(repeating: 0, count: winsize + 4 * FLTLEN)
         spec1 = Array(repeating: 0, count: winsize * 4)

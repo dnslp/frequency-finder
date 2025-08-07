@@ -21,18 +21,18 @@ private let MCACHE = 11 - (MemoryLayout<Float>.size / 8)
 
 // MARK: - Public API
 
-final class ZenFFT {
+public final class ZenFFT {
     private var utbl: [Float]
     private var brLow: [Int]
     private let logSize: Int
 
-    init(M: Int, size: Double) {
+    public init(M: Int, size: Double) {
         logSize = Int(log2(size))
         utbl = fftCosInit(M)
         brLow = fftBRInit(M)
     }
 
-    func compute(buf: inout [Float]) {
+    public func compute(buf: inout [Float]) {
         ffts1(&buf, logSize, &utbl, &brLow)
     }
 }

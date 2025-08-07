@@ -8,6 +8,7 @@ import AuthenticationServices
 import Combine
 
 // MARK: - Simple Spotify Manager (Web API Only)
+@MainActor
 class SimpleSpotifyManager: ObservableObject {
     @Published var isAuthenticated = false
     @Published var userProfile: SpotifyUserProfile?
