@@ -28,17 +28,23 @@ public final class FFTProcessor {
     ///   - size: FFT size 
     ///   - implementation: Which FFT implementation to use
     public init(M: Int, size: Double, implementation: FFTImplementation = .accelerate) {
+        print("🔍 FFTProcessor Debug: Attempting to create FFT with M=", M, "size=", size, "implementation=", implementation)
+        
         self.implementation = implementation
         
         switch implementation {
         case .zen:
+            print("🔍 FFTProcessor: Creating ZenFFT")
             self.zenFFT = ZenFFT(M: M, size: size)
             self.accelerateFFT = nil
             
         case .accelerate:
+            print("🔍 FFTProcessor: Creating AccelerateFFT")
             self.zenFFT = nil
             self.accelerateFFT = AccelerateFFT(M: M, size: size)
         }
+        
+        print("✅ FFTProcessor: Successfully created \(implementation == .accelerate ? "AccelerateFFT" : "ZenFFT")")
     }
     
     /// Compute FFT using the selected implementation
