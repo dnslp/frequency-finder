@@ -26,6 +26,10 @@ struct FrequencyFinderApp: App {
                         .tabItem {
                             Label("Reading", systemImage: "book")
                         }
+                    WebView(url: URL(string: "https://dnslp.github.io/reading-passage/")!)
+                        .tabItem {
+                            Label("Reading", systemImage: "book.fill")
+                        }
                 }
             } else {
                 OnboardingView(profileManager: profileManager, showOnboarding: $showOnboarding)
