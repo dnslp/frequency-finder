@@ -19,6 +19,21 @@ struct WebReadingPassageSessionView: View {
                     WebViewWithNavigation(url: webURL, viewModel: viewModel)
                         .frame(maxHeight: .infinity)
                     
+//                    // Debug info display with manual refresh
+//                    DebugInfoCard(viewModel: viewModel)
+//                        .padding(.horizontal)
+//                        .onReceive(viewModel.objectWillChange) { _ in
+//                            print("🔄 DEBUG: Main view received objectWillChange notification")
+//                        }
+//                        .onTapGesture {
+//                            print("🔄 DEBUG: Manual tap test - forcing ViewModel update")
+//                            viewModel.objectWillChange.send()
+//                        }
+//                        .onLongPressGesture {
+//                            print("🧪 DEBUG: Manual URL test with parameters")
+//                            viewModel.parseURLParameters(from: "https://dnslp.github.io/reading-passage/?passageId=test-passage&chunk=2")
+//                        }
+                    
                     // Recording UI overlay
                     VStack(spacing: 16) {
                         if viewModel.isRecording {
@@ -39,9 +54,22 @@ struct WebReadingPassageSessionView: View {
                     
                     Spacer(minLength: 0)
                     
-                    // Recording controls at bottom
-                    WebRecordingControls(viewModel: viewModel, isPressed: $isRecordButtonPressed)
-                        .padding()
+                    // Recording controls at bottom - only show if passageId exists
+                    Group {
+                        if viewModel.hasPassageId {
+                            WebRecordingControls(viewModel: viewModel, isPressed: $isRecordButtonPressed)
+                                .padding()
+                                .onAppear {
+                                    print("🎯 DEBUG: Recording controls appeared - hasPassageId=\(viewModel.hasPassageId)")
+                                }
+                        } else {
+                            Color.clear
+                                .frame(height: 1)
+                                .onAppear {
+                                    print("❌ DEBUG: Recording controls hidden - hasPassageId=\(viewModel.hasPassageId)")
+                                }
+                        }
+                    }
                 }
                 
                 // Soft blue glow border when recording
@@ -86,6 +114,23 @@ struct WebViewWithNavigation: UIViewRepresentable {
         if webView.url != url {
             let request = URLRequest(url: url)
             webView.load(request)
+        }
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(viewModel: viewModel)
+    }
+    
+    class Coordinator {
+        let viewModel: WebReadingPassageViewModel
+        
+        init(viewModel: WebReadingPassageViewModel) {
+            self.viewModel = viewModel
+        }
+        
+        func webViewDidFinishLoad(_ webView: WKWebView) {
+            // Start URL monitoring after the web view loads
+            viewModel.startURLMonitoring(webView: webView)
         }
     }
 }
@@ -198,6 +243,49 @@ struct WebRecordingControls: View {
         .background(Color(.secondarySystemBackground))
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
+    }
+}
+
+// MARK: - Debug Info Card
+struct DebugInfoCard: View {
+    @ObservedObject var viewModel: WebReadingPassageViewModel
+    @State private var refreshCount = 0
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack {
+                Text("🐛 DEBUG INFO")
+                    .font(.caption.bold())
+                    .foregroundColor(.orange)
+                Spacer()
+                Text("Refresh: \(refreshCount)")
+                    .font(.caption2)
+                    .foregroundColor(.gray)
+            }
+            
+            Text(viewModel.debugInfo)
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.leading)
+                .onAppear {
+                    print("📱 DEBUG: DebugInfoCard appeared with info: \(viewModel.debugInfo)")
+                }
+            
+            Text("hasPassageId: \(viewModel.hasPassageId ? "✅" : "❌")")
+                .font(.caption)
+                .foregroundColor(viewModel.hasPassageId ? .green : .red)
+        }
+        .padding()
+        .background(Color(.tertiarySystemBackground))
+        .cornerRadius(12)
+        .overlay(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.orange.opacity(0.3), lineWidth: 1)
+        )
+        .onReceive(viewModel.objectWillChange) { _ in
+            refreshCount += 1
+            print("🔄 DEBUG: DebugInfoCard refreshed (\(refreshCount)) - hasPassageId=\(viewModel.hasPassageId)")
+        }
     }
 }
 
