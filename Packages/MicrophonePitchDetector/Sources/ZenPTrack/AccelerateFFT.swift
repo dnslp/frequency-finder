@@ -75,8 +75,8 @@ public final class AccelerateFFT {
 
 // MARK: - Performance Benchmarking
 
-struct FFTBenchmark {
-    static func measurePerformance(iterations: Int = 1000, fftSize: Int = 4096) -> (accelerate: TimeInterval, zen: TimeInterval) {
+public struct FFTBenchmark {
+    public static func measurePerformance(iterations: Int = 1000, fftSize: Int = 4096) -> (accelerate: TimeInterval, zen: TimeInterval) {
         let M = Int(log2(Double(fftSize)))
         let size = Double(fftSize)
         
@@ -112,7 +112,7 @@ struct FFTBenchmark {
         return (accelerate: accelerateTime, zen: zenTime)
     }
     
-    static func runBenchmark() {
+    public static func runBenchmark() {
         print("🔬 FFT Performance Benchmark")
         print("============================")
         
@@ -133,9 +133,9 @@ struct FFTBenchmark {
 
 // MARK: - Accuracy Verification
 
-struct FFTAccuracyTest {
+public struct FFTAccuracyTest {
     /// Compare outputs of both FFT implementations to verify correctness
-    static func verifyAccuracy(fftSize: Int = 4096, tolerance: Float = 1e-4) -> Bool {
+    public static func verifyAccuracy(fftSize: Int = 4096, tolerance: Float = 1e-4) -> Bool {
         let M = Int(log2(Double(fftSize)))
         let size = Double(fftSize)
         

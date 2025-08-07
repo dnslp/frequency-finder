@@ -14,20 +14,20 @@ public enum FFTImplementation {
 }
 
 /// Unified FFT processor that can use either ZenFFT or AccelerateFFT
-final class FFTProcessor {
+public final class FFTProcessor {
     private let implementation: FFTImplementation
     private let zenFFT: ZenFFT?
     private let accelerateFFT: AccelerateFFT?
     
     /// Current implementation being used (for debugging/monitoring)
-    var currentImplementation: FFTImplementation { implementation }
+    public var currentImplementation: FFTImplementation { implementation }
     
     /// Initialize with specified FFT implementation
     /// - Parameters:
     ///   - M: Log2 of FFT size
     ///   - size: FFT size 
     ///   - implementation: Which FFT implementation to use
-    init(M: Int, size: Double, implementation: FFTImplementation = .accelerate) {
+    public init(M: Int, size: Double, implementation: FFTImplementation = .accelerate) {
         self.implementation = implementation
         
         switch implementation {
@@ -43,7 +43,7 @@ final class FFTProcessor {
     
     /// Compute FFT using the selected implementation
     /// - Parameter buf: Interleaved complex buffer to transform in-place
-    func compute(buf: inout [Float]) {
+    public func compute(buf: inout [Float]) {
         switch implementation {
         case .zen:
             zenFFT?.compute(buf: &buf)
@@ -55,7 +55,7 @@ final class FFTProcessor {
     
     /// Run performance comparison between implementations
     /// - Returns: Performance metrics for both implementations
-    static func performanceComparison() -> (accelerate: TimeInterval, zen: TimeInterval, speedup: Double) {
+    public static func performanceComparison() -> (accelerate: TimeInterval, zen: TimeInterval, speedup: Double) {
         let results = FFTBenchmark.measurePerformance(iterations: 1000, fftSize: 4096)
         let speedup = results.zen / results.accelerate
         
@@ -72,13 +72,13 @@ public struct FFTConfiguration {
     public static var defaultImplementation: FFTImplementation = .accelerate
     
     /// Enable performance monitoring
-    static var enablePerformanceLogging = false
+    public static var enablePerformanceLogging = false
     
     /// Log performance comparison on first use
-    static var logInitialBenchmark = true
+    public static var logInitialBenchmark = true
     
     /// Performance monitoring helper
-    static func logPerformanceIfNeeded() {
+    public static func logPerformanceIfNeeded() {
         guard logInitialBenchmark else { return }
         
         logInitialBenchmark = false
