@@ -1,6 +1,7 @@
 import SwiftUI
 import Combine
 import MicrophonePitchDetector
+import ZenPTrack
 
 class ReadingPassageViewModel: ObservableObject {
     @Published var selectedPassageIndex = 0
@@ -36,6 +37,9 @@ class ReadingPassageViewModel: ObservableObject {
 
     init(profileManager: UserProfileManager) {
         self.profileManager = profileManager
+        
+        // Log FFT implementation being used for voice analysis
+        print("🎙️ ReadingPassageViewModel initialized with FFT: \(FFTConfiguration.defaultImplementation == .accelerate ? "Accelerate" : "ZenFFT")")
     }
 
     func activatePitchDetector() {

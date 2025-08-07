@@ -173,6 +173,13 @@ struct ProfileView: View {
                         }
                     }
                 }
+                
+                #if DEBUG
+                Section(header: Text("🧪 FFT Implementation Testing")) {
+                    FFTDebugView()
+                }
+                #endif
+                
                 Section(header: Text("🎵 Enhanced Spotify")) {
                     NavigationLink(destination: EnhancedSpotifyView()) {
                         HStack {
