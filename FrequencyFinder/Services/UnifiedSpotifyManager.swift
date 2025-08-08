@@ -396,42 +396,125 @@ class UnifiedSpotifyManager: ObservableObject {
     }
     
     private func fetchTopArtists(token: String, completion: @escaping (Result<[SpotifyArtist], Error>) -> Void) {
-        makeAPIRequest(
+        makeAPIRequestWithDebug(
             endpoint: "me/top/artists?limit=50&time_range=medium_term",
             token: token,
-            type: SpotifyTopItemsResponse<SpotifyArtist>.self
+            dataType: "artists"
         ) { result in
-            completion(result.map { $0.items })
+            switch result {
+            case .success(let data):
+                do {
+                    // Try flexible model first
+                    let flexibleResponse = try JSONDecoder().decode(FlexibleSpotifyTopItemsResponse<FlexibleSpotifyArtist>.self, from: data)
+                    let convertedArtists = flexibleResponse.safeItems.compactMap { $0.toSpotifyArtist() }
+                    print("✅ Successfully parsed \(convertedArtists.count) artists from \(flexibleResponse.safeItems.count) raw items")
+                    completion(.success(convertedArtists))
+                } catch {
+                    print("❌ Artists JSON decode error (flexible model): \(error)")
+                    
+                    // Fallback to original model
+                    do {
+                        let response = try JSONDecoder().decode(SpotifyTopItemsResponse<SpotifyArtist>.self, from: data)
+                        completion(.success(response.items))
+                    } catch {
+                        print("❌ Artists JSON decode error (original model): \(error)")
+                        completion(.failure(error))
+                    }
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
         }
     }
     
     private func fetchTopTracks(token: String, completion: @escaping (Result<[SpotifyTrack], Error>) -> Void) {
-        makeAPIRequest(
+        makeAPIRequestWithDebug(
             endpoint: "me/top/tracks?limit=50&time_range=medium_term",
             token: token,
-            type: SpotifyTopItemsResponse<SpotifyTrack>.self
+            dataType: "tracks"
         ) { result in
-            completion(result.map { $0.items })
+            switch result {
+            case .success(let data):
+                do {
+                    // Try flexible model first
+                    let flexibleResponse = try JSONDecoder().decode(FlexibleSpotifyTopItemsResponse<FlexibleSpotifyTrack>.self, from: data)
+                    let convertedTracks = flexibleResponse.safeItems.compactMap { $0.toSpotifyTrack() }
+                    print("✅ Successfully parsed \(convertedTracks.count) tracks from \(flexibleResponse.safeItems.count) raw items")
+                    completion(.success(convertedTracks))
+                } catch {
+                    print("❌ Tracks JSON decode error (flexible model): \(error)")
+                    if let jsonString = String(data: data, encoding: .utf8) {
+                        print("🔍 Raw tracks response: \(jsonString.prefix(500))...")
+                    }
+                    
+                    // Fallback to original model
+                    do {
+                        let response = try JSONDecoder().decode(SpotifyTopItemsResponse<SpotifyTrack>.self, from: data)
+                        completion(.success(response.items))
+                    } catch {
+                        print("❌ Tracks JSON decode error (original model): \(error)")
+                        completion(.failure(error))
+                    }
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
         }
     }
     
     private func fetchPlaylists(token: String, completion: @escaping (Result<[SpotifyPlaylist], Error>) -> Void) {
-        makeAPIRequest(
+        makeAPIRequestWithDebug(
             endpoint: "me/playlists?limit=50",
             token: token,
-            type: SpotifyPlaylistsResponse.self
+            dataType: "playlists"
         ) { result in
-            completion(result.map { $0.items })
+            switch result {
+            case .success(let data):
+                do {
+                    let response = try JSONDecoder().decode(SpotifyPlaylistsResponse.self, from: data)
+                    completion(.success(response.items))
+                } catch {
+                    print("❌ Playlists JSON decode error: \(error)")
+                    completion(.failure(error))
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
         }
     }
     
     private func fetchRecentlyPlayed(token: String, completion: @escaping (Result<[SpotifyPlayHistory], Error>) -> Void) {
-        makeAPIRequest(
+        makeAPIRequestWithDebug(
             endpoint: "me/player/recently-played?limit=50",
             token: token,
-            type: SpotifyRecentlyPlayedResponse.self
+            dataType: "recent"
         ) { result in
-            completion(result.map { $0.items })
+            switch result {
+            case .success(let data):
+                do {
+                    // Try flexible model first
+                    let flexibleResponse = try JSONDecoder().decode(FlexibleSpotifyRecentlyPlayedResponse.self, from: data)
+                    let convertedHistory = flexibleResponse.safeItems.compactMap { $0.toSpotifyPlayHistory() }
+                    print("✅ Successfully parsed \(convertedHistory.count) recent tracks from \(flexibleResponse.safeItems.count) raw items")
+                    completion(.success(convertedHistory))
+                } catch {
+                    print("❌ Recent JSON decode error (flexible model): \(error)")
+                    if let jsonString = String(data: data, encoding: .utf8) {
+                        print("🔍 Raw recent response: \(jsonString.prefix(500))...")
+                    }
+                    
+                    // Fallback to original model
+                    do {
+                        let response = try JSONDecoder().decode(SpotifyRecentlyPlayedResponse.self, from: data)
+                        completion(.success(response.items))
+                    } catch {
+                        print("❌ Recent JSON decode error (original model): \(error)")
+                        completion(.failure(error))
+                    }
+                }
+            case .failure(let error):
+                completion(.failure(error))
+            }
         }
     }
     
@@ -459,6 +542,42 @@ class UnifiedSpotifyManager: ObservableObject {
                     }
                 },
                 receiveValue: { data in
+                    completion(.success(data))
+                }
+            )
+            .store(in: &cancellables)
+    }
+    
+    private func makeAPIRequestWithDebug(
+        endpoint: String,
+        token: String,
+        dataType: String,
+        completion: @escaping (Result<Data, Error>) -> Void
+    ) {
+        guard let url = URL(string: "https://api.spotify.com/v1/\(endpoint)") else {
+            completion(.failure(NSError(domain: "UnifiedSpotifyManager", code: 0, userInfo: [NSLocalizedDescriptionKey: "Invalid URL"])))
+            return
+        }
+        
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        print("🔍 Fetching \(dataType) from: \(url)")
+        
+        URLSession.shared.dataTaskPublisher(for: request)
+            .sink(
+                receiveCompletion: { result in
+                    if case .failure(let error) = result {
+                        print("❌ \(dataType) API request failed: \(error)")
+                        completion(.failure(error))
+                    }
+                },
+                receiveValue: { data, response in
+                    if let httpResponse = response as? HTTPURLResponse {
+                        print("✅ \(dataType) HTTP Status: \(httpResponse.statusCode)")
+                    }
+                    
+                    print("✅ \(dataType) data size: \(data.count) bytes")
                     completion(.success(data))
                 }
             )
