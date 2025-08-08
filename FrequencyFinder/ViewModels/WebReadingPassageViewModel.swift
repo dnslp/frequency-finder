@@ -38,6 +38,11 @@ class WebReadingPassageViewModel: ObservableObject {
             print("📝 DEBUG: debugInfo updated")
         }
     }
+    @Published var isWebViewLoading: Bool = false {
+        didSet {
+            print("🌐 DEBUG: isWebViewLoading changed from \(oldValue) to \(isWebViewLoading)")
+        }
+    }
     
     // Debug flag - set to true to always show recording button for testing
     let alwaysShowRecordingButton = false
@@ -128,7 +133,7 @@ class WebReadingPassageViewModel: ObservableObject {
             let pitch = self.pitchDetector.pitch
             print("🎵 DEBUG: Raw pitch detected: \(pitch)")
             
-            if pitch > 40 && pitch < 1000 {
+            if pitch > 55 && pitch < 500 {
                 self.pitchSamples.append(pitch)
                 print("✅ DEBUG: Valid pitch added to samples: \(pitch) (total samples: \(self.pitchSamples.count))")
                 self.smoothedPitch = self.smoothedPitch * (1 - self.pitchSmoothingFactor) + pitch * self.pitchSmoothingFactor
@@ -180,7 +185,7 @@ class WebReadingPassageViewModel: ObservableObject {
             let notesString = buildNotesString()
             profileManager.addSession(
                 type: .readingAnalysis,
-                pitchSamples: filteredSamples,
+                pitchSamples: pitchSamples,
                 duration: duration,
                 notes: notesString
             )
@@ -308,8 +313,15 @@ class WebNavigationDelegate: NSObject, WKNavigationDelegate {
             DispatchQueue.main.async {
                 self.viewModel?.currentURL = url
                 self.viewModel?.parseURLParameters(from: url)
+                self.viewModel?.isWebViewLoading = false
             }
             viewModel?.startURLMonitoring(webView: webView)
+        }
+    }
+    
+    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+        DispatchQueue.main.async {
+            self.viewModel?.isWebViewLoading = true
         }
     }
     

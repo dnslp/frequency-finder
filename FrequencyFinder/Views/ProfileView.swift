@@ -173,17 +173,22 @@ struct ProfileView: View {
                         }
                     }
                 }
-                Section(header: Text("🎵 Enhanced Spotify")) {
-                    NavigationLink(destination: EnhancedSpotifyView()) {
+                Section(header: Text("🎵 Spotify with Persistence")) {
+                    NavigationLink(destination: PersistentSpotifyView()) {
                         HStack {
-                            Image(systemName: "music.note.list")
-                            Text("View Spotify Data")
+                            Image(systemName: "music.note.house.fill")
+                            VStack(alignment: .leading) {
+                                Text("Spotify Data")
+                                Text("With offline caching & auto-sync")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                         }
                     }
-                }
-                // MARK: - Spotify Profile Section
-                Section(header: Text("🎵 Spotify Profile")) {
-                    SimpleSpotifyView()
                 }
                          }
                          .navigationTitle("User Profile")

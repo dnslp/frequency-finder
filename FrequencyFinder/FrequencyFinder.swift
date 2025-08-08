@@ -13,6 +13,10 @@ struct FrequencyFinderApp: App {
         WindowGroup {
             if profileManager.hasCompletedOnboarding && !showOnboarding {
                 TabView {
+                    WebReadingPassageSessionView(profileManager: profileManager)
+                        .tabItem {
+                            Label("Reading", systemImage: "book.fill")
+                        }
                     TunerScreen()
                         .tabItem {
                             Label("Tuner", systemImage: "tuningfork")
@@ -22,14 +26,11 @@ struct FrequencyFinderApp: App {
                         .tabItem {
                             Label("Profile", systemImage: "person.crop.circle")
                         }
-                    ReadingPassageSessionView(profileManager: profileManager)
-                        .tabItem {
-                            Label("Reading", systemImage: "book")
-                        }
-                    WebReadingPassageSessionView(profileManager: profileManager)
-                        .tabItem {
-                            Label("Reading", systemImage: "book.fill")
-                        }
+//                    ReadingPassageSessionView(profileManager: profileManager)
+//                        .tabItem {
+//                            Label("Reading", systemImage: "book")
+//                        }
+
                 }
             } else {
                 OnboardingView(profileManager: profileManager, showOnboarding: $showOnboarding)
