@@ -22,7 +22,7 @@ struct PersistentSpotifyView: View {
                     AuthenticationView(manager: spotifyManager)
                 } else {
                     // Show data (either live or cached)
-                    SpotifyDataTabView(manager: spotifyManager, selectedTab: $selectedTab)
+                    PersistentSpotifyDataTabView(manager: spotifyManager, selectedTab: $selectedTab)
                 }
             }
             .navigationTitle("Spotify")
@@ -147,39 +147,39 @@ struct AuthenticationView: View {
     }
 }
 
-// MARK: - Spotify Data Tab View
+// MARK: - Persistent Spotify Data Tab View
 
-struct SpotifyDataTabView: View {
+struct PersistentSpotifyDataTabView: View {
     @ObservedObject var manager: UnifiedSpotifyManager
     @Binding var selectedTab: Int
     
     var body: some View {
         TabView(selection: $selectedTab) {
-            ProfileTabView(manager: manager)
+            PersistentProfileTabView(manager: manager)
                 .tabItem {
                     Label("Profile", systemImage: "person.circle")
                 }
                 .tag(0)
             
-            TopArtistsTabView(artists: manager.topArtists, isOffline: manager.isOfflineMode)
+            PersistentTopArtistsTabView(artists: manager.topArtists, isOffline: manager.isOfflineMode)
                 .tabItem {
                     Label("Artists", systemImage: "music.mic")
                 }
                 .tag(1)
             
-            TopTracksTabView(tracks: manager.topTracks, isOffline: manager.isOfflineMode)
+            PersistentTopTracksTabView(tracks: manager.topTracks, isOffline: manager.isOfflineMode)
                 .tabItem {
                     Label("Tracks", systemImage: "music.note")
                 }
                 .tag(2)
             
-            PlaylistsTabView(playlists: manager.playlists, isOffline: manager.isOfflineMode)
+            PersistentPlaylistsTabView(playlists: manager.playlists, isOffline: manager.isOfflineMode)
                 .tabItem {
                     Label("Playlists", systemImage: "music.note.list")
                 }
                 .tag(3)
             
-            RecentTabView(recentTracks: manager.recentlyPlayed, isOffline: manager.isOfflineMode)
+            PersistentRecentTabView(recentTracks: manager.recentlyPlayed, isOffline: manager.isOfflineMode)
                 .tabItem {
                     Label("Recent", systemImage: "clock")
                 }
@@ -190,7 +190,7 @@ struct SpotifyDataTabView: View {
 
 // MARK: - Profile Tab
 
-struct ProfileTabView: View {
+struct PersistentProfileTabView: View {
     @ObservedObject var manager: UnifiedSpotifyManager
     
     var body: some View {
@@ -203,14 +203,14 @@ struct ProfileTabView: View {
                     }
                     
                     // Profile Header
-                    ProfileHeaderView(profile: profile)
+                    PersistentProfileHeaderView(profile: profile)
                     
                     // Stats Grid
                     LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 16) {
-                        StatCard(title: "Followers", value: "\(profile.followers?.total ?? 0)")
-                        StatCard(title: "Country", value: profile.country ?? "Unknown")
-                        StatCard(title: "Plan", value: profile.product?.capitalized ?? "Free")
-                        StatCard(title: "Playlists", value: "\(manager.playlists.count)")
+                        PersistentStatCard(title: "Followers", value: "\(profile.followers?.total ?? 0)")
+                        PersistentStatCard(title: "Country", value: profile.country ?? "Unknown")
+                        PersistentStatCard(title: "Plan", value: profile.product?.capitalized ?? "Free")
+                        PersistentStatCard(title: "Playlists", value: "\(manager.playlists.count)")
                     }
                 }
                 .padding()
@@ -230,7 +230,7 @@ struct ProfileTabView: View {
 
 // MARK: - Artists Tab
 
-struct TopArtistsTabView: View {
+struct PersistentTopArtistsTabView: View {
     let artists: [SpotifyArtist]
     let isOffline: Bool
     
@@ -245,7 +245,7 @@ struct TopArtistsTabView: View {
                     )
                 } else {
                     List(artists) { artist in
-                        ArtistRowView(artist: artist)
+                        PersistentArtistRowView(artist: artist)
                     }
                     .listStyle(PlainListStyle())
                 }
@@ -263,7 +263,7 @@ struct TopArtistsTabView: View {
 
 // MARK: - Tracks Tab
 
-struct TopTracksTabView: View {
+struct PersistentTopTracksTabView: View {
     let tracks: [SpotifyTrack]
     let isOffline: Bool
     
@@ -278,7 +278,7 @@ struct TopTracksTabView: View {
                     )
                 } else {
                     List(tracks) { track in
-                        TrackRowView(track: track)
+                        PersistentTrackRowView(track: track)
                     }
                     .listStyle(PlainListStyle())
                 }
@@ -296,7 +296,7 @@ struct TopTracksTabView: View {
 
 // MARK: - Playlists Tab
 
-struct PlaylistsTabView: View {
+struct PersistentPlaylistsTabView: View {
     let playlists: [SpotifyPlaylist]
     let isOffline: Bool
     
@@ -311,7 +311,7 @@ struct PlaylistsTabView: View {
                     )
                 } else {
                     List(playlists) { playlist in
-                        PlaylistRowView(playlist: playlist)
+                        PersistentPlaylistRowView(playlist: playlist)
                     }
                     .listStyle(PlainListStyle())
                 }
@@ -329,7 +329,7 @@ struct PlaylistsTabView: View {
 
 // MARK: - Recent Tab
 
-struct RecentTabView: View {
+struct PersistentRecentTabView: View {
     let recentTracks: [SpotifyPlayHistory]
     let isOffline: Bool
     
@@ -344,7 +344,7 @@ struct RecentTabView: View {
                     )
                 } else {
                     List(recentTracks) { item in
-                        RecentTrackRowView(playHistory: item)
+                        PersistentRecentTrackRowView(playHistory: item)
                     }
                     .listStyle(PlainListStyle())
                 }
@@ -378,7 +378,7 @@ struct OfflineBanner: View {
     }
 }
 
-struct ProfileHeaderView: View {
+struct PersistentProfileHeaderView: View {
     let profile: SpotifyUserProfile
     
     var body: some View {
@@ -419,7 +419,7 @@ struct ProfileHeaderView: View {
     }
 }
 
-struct StatCard: View {
+struct PersistentStatCard: View {
     let title: String
     let value: String
     
@@ -439,7 +439,7 @@ struct StatCard: View {
     }
 }
 
-struct ArtistRowView: View {
+struct PersistentArtistRowView: View {
     let artist: SpotifyArtist
     
     var body: some View {
@@ -478,7 +478,7 @@ struct ArtistRowView: View {
     }
 }
 
-struct TrackRowView: View {
+struct PersistentTrackRowView: View {
     let track: SpotifyTrack
     
     var body: some View {
@@ -528,7 +528,7 @@ struct TrackRowView: View {
     }
 }
 
-struct PlaylistRowView: View {
+struct PersistentPlaylistRowView: View {
     let playlist: SpotifyPlaylist
     
     var body: some View {
@@ -566,7 +566,7 @@ struct PlaylistRowView: View {
     }
 }
 
-struct RecentTrackRowView: View {
+struct PersistentRecentTrackRowView: View {
     let playHistory: SpotifyPlayHistory
     
     var body: some View {
