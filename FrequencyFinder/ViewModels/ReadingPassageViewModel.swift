@@ -73,7 +73,7 @@ class ReadingPassageViewModel: ObservableObject {
         pitchTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
             guard let self = self else { return }
             let pitch = self.pitchDetector.pitch
-            if pitch > 40 && pitch < 1000 {
+            if pitch > 55 && pitch < 500 {
                 self.pitchSamples.append(pitch)
                 self.smoothedPitch = self.smoothedPitch * (1 - self.pitchSmoothingFactor) + pitch * self.pitchSmoothingFactor
             }
@@ -109,7 +109,7 @@ class ReadingPassageViewModel: ObservableObject {
 
             profileManager.addSession(
                 type: .readingAnalysis,
-                pitchSamples: filteredSamples,
+                pitchSamples: pitchSamples,
                 duration: duration,
                 notes: ReadingPassage.passages[selectedPassageIndex].title
             )

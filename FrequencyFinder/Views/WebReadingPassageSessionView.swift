@@ -15,9 +15,16 @@ struct WebReadingPassageSessionView: View {
         NavigationStack {
             ZStack {
                 VStack(spacing: 0) {
-                    // Web content area - takes most of the screen
-                    WebViewWithNavigation(url: webURL, viewModel: viewModel)
-                        .frame(maxHeight: .infinity)
+                    // Web content area with loading overlay
+                    ZStack {
+                        WebViewWithNavigation(url: webURL, viewModel: viewModel)
+                            .frame(maxHeight: .infinity)
+                            .opacity(viewModel.isWebViewLoading ? 0.3 : 1.0)
+                        
+                        if viewModel.isWebViewLoading {
+                            WebLoadingView()
+                        }
+                    }
                     
                     // Results and error overlay - minimal space usage
                     VStack(spacing: 16) {
@@ -67,6 +74,16 @@ struct WebReadingPassageSessionView: View {
             }
             .onDisappear { viewModel.invalidateTimers() }
             .task { viewModel.activatePitchDetector() }
+            .onAppear {
+                print("📱 DEBUG: WebReadingPassageSessionView appeared - isWebViewLoading: \(viewModel.isWebViewLoading)")
+                // Fallback: Clear loading state after 5 seconds if it hasn't cleared
+                DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                    if viewModel.isWebViewLoading {
+                        print("⚠️ DEBUG: Clearing loading state after timeout")
+                        viewModel.isWebViewLoading = false
+                    }
+                }
+            }
         }
     }
 }
@@ -161,17 +178,17 @@ struct DismissibleResultsCard: View {
                 }
                 
                 // Record again button
-                Button("Record Again") {
-                    withAnimation(.easeInOut) {
-                        viewModel.resetResults()
-                    }
-                }
-                .font(.headline)
-                .padding()
-                .frame(maxWidth: .infinity)
-                .background(Color.accentColor)
-                .foregroundColor(.white)
-                .cornerRadius(12)
+//                Button("Record Again") {
+//                    withAnimation(.easeInOut) {
+//                        viewModel.resetResults()
+//                    }
+//                }
+//                .font(.headline)
+//                .padding()
+//                .frame(maxWidth: .infinity)
+//                .background(Color.accentColor)
+//                .foregroundColor(.white)
+//                .cornerRadius(12)
             }
         }
         .transition(.move(edge: .top).combined(with: .opacity))
@@ -316,6 +333,60 @@ struct DebugInfoCard: View {
             refreshCount += 1
             print("🔄 DEBUG: DebugInfoCard refreshed (\(refreshCount)) - hasPassageId=\(viewModel.hasPassageId)")
         }
+    }
+}
+
+// MARK: - Web Loading Animation
+struct WebLoadingView: View {
+    @State private var animationOffset: CGFloat = 0
+    @State private var pulseScale: CGFloat = 1.0
+    
+    var body: some View {
+        VStack(spacing: 24) {
+            // Animated logo/icon
+            Image(systemName: "globe")
+                .font(.system(size: 48, weight: .light))
+                .foregroundColor(.accentColor)
+                .scaleEffect(pulseScale)
+                .animation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true), value: pulseScale)
+                .onAppear {
+                    pulseScale = 1.2
+                }
+            
+            VStack(spacing: 12) {
+                Text("Loading Reading Passages...")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                
+                // Animated progress indicator
+                HStack(spacing: 4) {
+                    ForEach(0..<3, id: \.self) { index in
+                        Circle()
+                            .fill(Color.accentColor)
+                            .frame(width: 8, height: 8)
+                            .scaleEffect(animationOffset == CGFloat(index) ? 1.5 : 0.8)
+                            .animation(.easeInOut(duration: 0.6).repeatForever(), value: animationOffset)
+                    }
+                }
+                .onAppear {
+                    Timer.scheduledTimer(withTimeInterval: 0.2, repeats: true) { timer in
+                        withAnimation {
+                            animationOffset = animationOffset >= 2 ? 0 : animationOffset + 1
+                        }
+                    }
+                }
+                
+                Text("Connecting to server...")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(32)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(.ultraThinMaterial)
+                .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
+        )
     }
 }
 
