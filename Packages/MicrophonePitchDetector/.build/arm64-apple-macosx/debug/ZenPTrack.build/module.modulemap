@@ -1,0 +1,4 @@
+module ZenPTrack {
+    header "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/ZenPTrack-Swift.h"
+    requires objc
+}

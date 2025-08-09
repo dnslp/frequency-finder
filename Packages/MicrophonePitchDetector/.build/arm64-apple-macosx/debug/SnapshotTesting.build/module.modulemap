@@ -1,0 +1,4 @@
+module SnapshotTesting {
+    header "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/SnapshotTesting-Swift.h"
+    requires objc
+}

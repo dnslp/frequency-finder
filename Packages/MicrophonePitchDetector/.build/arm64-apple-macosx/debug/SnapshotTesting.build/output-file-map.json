@@ -1,0 +1,191 @@
+{
+  "": {
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/master.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/AssertSnapshot.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/AssertSnapshot.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/AssertSnapshot.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/AssertSnapshot~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/AssertSnapshot.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Async.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Async.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Async.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Async~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Async.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Common/Internal.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Internal.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Internal.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Internal~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Internal.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Common/PlistEncoder.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/PlistEncoder.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/PlistEncoder.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/PlistEncoder~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/PlistEncoder.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Common/String+SpecialCharacters.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/String+SpecialCharacters.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/String+SpecialCharacters.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/String+SpecialCharacters~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/String+SpecialCharacters.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Common/View.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/View.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/View.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/View~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/View.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Common/XCTAttachment.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/XCTAttachment.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/XCTAttachment.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/XCTAttachment~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/XCTAttachment.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Diff.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Diff.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Diff.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Diff~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Diff.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Diffing.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Diffing.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Diffing.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Diffing~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Diffing.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Extensions/Wait.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Wait.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Wait.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Wait~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Wait.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Internal/Deprecations.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Deprecations.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Deprecations.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Deprecations~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Deprecations.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Snapshotting.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Snapshotting.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Snapshotting.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Snapshotting~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Snapshotting.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Snapshotting/Any.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Any.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Any.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Any~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Any.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Snapshotting/CALayer.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/CALayer.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/CALayer.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/CALayer~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/CALayer.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Snapshotting/CGPath.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/CGPath.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/CGPath.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/CGPath~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/CGPath.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Snapshotting/CaseIterable.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/CaseIterable.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/CaseIterable.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/CaseIterable~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/CaseIterable.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Snapshotting/Data.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Data.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Data.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Data~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Data.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Snapshotting/Encodable.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Encodable.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Encodable.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Encodable~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/Encodable.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Snapshotting/NSBezierPath.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/NSBezierPath.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/NSBezierPath.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/NSBezierPath~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/NSBezierPath.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Snapshotting/NSImage.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/NSImage.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/NSImage.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/NSImage~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/NSImage.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Snapshotting/NSView.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/NSView.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/NSView.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/NSView~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/NSView.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Snapshotting/NSViewController.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/NSViewController.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/NSViewController.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/NSViewController~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/NSViewController.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Snapshotting/SceneKit.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/SceneKit.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/SceneKit.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/SceneKit~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/SceneKit.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Snapshotting/SpriteKit.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/SpriteKit.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/SpriteKit.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/SpriteKit~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/SpriteKit.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Snapshotting/String.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/String.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/String.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/String~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/String.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Snapshotting/SwiftUIView.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/SwiftUIView.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/SwiftUIView.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/SwiftUIView~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/SwiftUIView.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Snapshotting/UIBezierPath.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/UIBezierPath.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/UIBezierPath.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/UIBezierPath~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/UIBezierPath.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Snapshotting/UIImage.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/UIImage.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/UIImage.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/UIImage~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/UIImage.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Snapshotting/UIView.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/UIView.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/UIView.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/UIView~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/UIView.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Snapshotting/UIViewController.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/UIViewController.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/UIViewController.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/UIViewController~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/UIViewController.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/checkouts/swift-snapshot-testing/Sources/SnapshotTesting/Snapshotting/URLRequest.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/URLRequest.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/URLRequest.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/URLRequest~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SnapshotTesting.build/URLRequest.swiftdeps"
+  }
+}

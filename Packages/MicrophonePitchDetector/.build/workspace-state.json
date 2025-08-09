@@ -1,0 +1,47 @@
+{
+  "object" : {
+    "artifacts" : [
+
+    ],
+    "dependencies" : [
+      {
+        "basedOn" : null,
+        "packageRef" : {
+          "identity" : "swift-snapshot-testing",
+          "kind" : "remoteSourceControl",
+          "location" : "https://github.com/pointfreeco/swift-snapshot-testing",
+          "name" : "swift-snapshot-testing"
+        },
+        "state" : {
+          "checkoutState" : {
+            "revision" : "bb0ea08db8e73324fe6c3727f755ca41a23ff2f4",
+            "version" : "1.14.2"
+          },
+          "name" : "sourceControlCheckout"
+        },
+        "subpath" : "swift-snapshot-testing"
+      },
+      {
+        "basedOn" : null,
+        "packageRef" : {
+          "identity" : "swift-syntax",
+          "kind" : "remoteSourceControl",
+          "location" : "https://github.com/apple/swift-syntax.git",
+          "name" : "swift-syntax"
+        },
+        "state" : {
+          "checkoutState" : {
+            "revision" : "6ad4ea24b01559dde0773e3d091f1b9e36175036",
+            "version" : "509.0.2"
+          },
+          "name" : "sourceControlCheckout"
+        },
+        "subpath" : "swift-syntax"
+      }
+    ],
+    "prebuilts" : [
+
+    ]
+  },
+  "version" : 7
+}

@@ -1,0 +1,11 @@
+{
+  "": {
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/PitchRecording.build/master.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/Sources/PitchRecording/PitchRecording.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/PitchRecording.build/PitchRecording.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/PitchRecording.build/PitchRecording.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/PitchRecording.build/PitchRecording~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/PitchRecording.build/PitchRecording.swiftdeps"
+  }
+}

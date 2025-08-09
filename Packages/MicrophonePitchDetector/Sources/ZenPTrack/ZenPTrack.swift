@@ -305,10 +305,24 @@ private extension ZenPTrack {
     }
 
     func ptrackPt5(histpeak: HISTOPEAK, npeak: Int, npartials: inout Int, nbelow8: inout Int, cumpow: inout Double, freqnum: inout Double, freqden: inout Double) {
+        // Safety check for valid histogram peak index
+        guard histpeak.hindex >= 0 else {
+            return
+        }
+        
         let putfreq = exp((1.0 / BPEROOVERLOG2) * (Double(histpeak.hindex) + 96.0))
+        
+        // Safety check for putfreq validity
+        guard putfreq.isFinite && putfreq > 0 else {
+            return
+        }
 
         for peak in peaklist.prefix(npeak) {
             let fpnum = peak.pfreq / putfreq
+            
+            // Safety check before converting to Int
+            guard fpnum.isFinite else { continue }
+            
             let pnum = Int(fpnum + 0.5)
 
             if pnum > 16 || pnum < 1 { continue }
@@ -335,6 +349,11 @@ private extension ZenPTrack {
             return
         }
 
+        // Safety check for division by zero and validity
+        guard freqden > 0 && freqnum.isFinite && freqden.isFinite else {
+            return
+        }
+        
         let freqinbins = freqnum / freqden
 
         if freqinbins < MINFREQINBINS {

@@ -1,0 +1,17 @@
+{
+  "": {
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/MicrophonePitchDetectorTests.build/master.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/Tests/MicrophonePitchDetectorTests/MicrophonePitchDetectorTests.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/MicrophonePitchDetectorTests.build/MicrophonePitchDetectorTests.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/MicrophonePitchDetectorTests.build/MicrophonePitchDetectorTests.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/MicrophonePitchDetectorTests.build/MicrophonePitchDetectorTests~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/MicrophonePitchDetectorTests.build/MicrophonePitchDetectorTests.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/Tests/MicrophonePitchDetectorTests/Snapshotting+PitchRecording.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/MicrophonePitchDetectorTests.build/Snapshotting+PitchRecording.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/MicrophonePitchDetectorTests.build/Snapshotting+PitchRecording.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/MicrophonePitchDetectorTests.build/Snapshotting+PitchRecording~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/MicrophonePitchDetectorTests.build/Snapshotting+PitchRecording.swiftdeps"
+  }
+}

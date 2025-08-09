@@ -1,0 +1,4 @@
+module MicrophonePitchDetector {
+    header "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/MicrophonePitchDetector.build/MicrophonePitchDetector-Swift.h"
+    requires objc
+}

@@ -1,0 +1,35 @@
+{
+  "": {
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/master.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/Sources/ZenPTrack/AccelerateFFT.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/AccelerateFFT.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/AccelerateFFT.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/AccelerateFFT~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/AccelerateFFT.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/Sources/ZenPTrack/FFTProcessor.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/FFTProcessor.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/FFTProcessor.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/FFTProcessor~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/FFTProcessor.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/Sources/ZenPTrack/FFTTest.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/FFTTest.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/FFTTest.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/FFTTest~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/FFTTest.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/Sources/ZenPTrack/ZenFFT.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/ZenFFT.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/ZenFFT.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/ZenFFT~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/ZenFFT.swiftdeps"
+  },
+  "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/Sources/ZenPTrack/ZenPTrack.swift": {
+    "dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/ZenPTrack.d",
+    "object": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/ZenPTrack.swift.o",
+    "swiftmodule": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/ZenPTrack~partial.swiftmodule",
+    "swift-dependencies": "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/ZenPTrack.build/ZenPTrack.swiftdeps"
+  }
+}

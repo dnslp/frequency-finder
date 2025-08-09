@@ -1,0 +1,4 @@
+module SwiftSyntaxMacroExpansion {
+    header "/Users/davidnyman/Code/FrequencyFinder/Packages/MicrophonePitchDetector/.build/arm64-apple-macosx/debug/SwiftSyntaxMacroExpansion.build/SwiftSyntaxMacroExpansion-Swift.h"
+    requires objc
+}
