@@ -13,8 +13,6 @@ struct ProfileView: View {
     @ObservedObject var profileManager: UserProfileManager
     @Binding var showOnboarding: Bool
 
-    @StateObject private var spotifyManager = SpotifyManager()
-
     /// Grab your AppDelegate directly
     private var appDelegate: AppDelegate? {
          UIApplication.shared.delegate as? AppDelegate
@@ -174,7 +172,7 @@ struct ProfileView: View {
                     }
                 }
                 Section(header: Text("🎵 Spotify with Persistence")) {
-                    NavigationLink(destination: PersistentSpotifyView()) {
+                    NavigationLink(destination: SpotifyView()) {
                         HStack {
                             Image(systemName: "music.note.house.fill")
                             VStack(alignment: .leading) {
@@ -192,13 +190,6 @@ struct ProfileView: View {
                 }
                          }
                          .navigationTitle("User Profile")
-            .onAppear {
-                guard let token = appDelegate?.appRemote.connectionParameters.accessToken else {
-                    spotifyManager.errorMessage = "Not authenticated"
-                    return
-                }
-                spotifyManager.fetchUserProfile(accessToken: token)
-            }
         }
     }
 

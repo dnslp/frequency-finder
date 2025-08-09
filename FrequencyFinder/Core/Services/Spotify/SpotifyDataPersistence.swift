@@ -34,25 +34,9 @@ struct CachedSpotifyData: Codable {
     }
 }
 
-struct SpotifyTokenData: Codable {
-    let accessToken: String
-    let refreshToken: String?
-    let expiresAt: Date
-    let scopes: [String]
-    
-    var isExpired: Bool {
-        Date() >= expiresAt
-    }
-    
-    var isExpiringSoon: Bool {
-        let fiveMinutesFromNow = Date().addingTimeInterval(5 * 60)
-        return fiveMinutesFromNow >= expiresAt
-    }
-}
+// MARK: - Spotify Data Persistence Service
 
-// MARK: - Spotify Data Store
-
-class SpotifyDataStore: ObservableObject {
+class SpotifyDataPersistence: ObservableObject {
     @Published var cachedData: CachedSpotifyData?
     @Published var isDataAvailable: Bool = false
     @Published var lastSyncDate: Date?
@@ -61,7 +45,6 @@ class SpotifyDataStore: ObservableObject {
     
     private let userDefaults = UserDefaults.standard
     private let dataKey = "spotify_cached_data"
-    private let tokenKey = "spotify_token_data"
     
     private let cacheExpirationInterval: TimeInterval = 6 * 60 * 60 // 6 hours
     private let maxCacheAge: TimeInterval = 24 * 60 * 60 // 24 hours
@@ -145,42 +128,7 @@ class SpotifyDataStore: ObservableObject {
         }
     }
     
-    // MARK: - Token Management
-    
-    func saveTokenData(_ tokenData: SpotifyTokenData) {
-        guard let encoded = try? JSONEncoder().encode(tokenData) else {
-            print("❌ Failed to encode token data")
-            return
-        }
-        
-        userDefaults.set(encoded, forKey: tokenKey)
-        print("🔐 Saved token data, expires at \(tokenData.expiresAt.formatted())")
-    }
-    
-    func getTokenData() -> SpotifyTokenData? {
-        guard let data = userDefaults.data(forKey: tokenKey),
-              let tokenData = try? JSONDecoder().decode(SpotifyTokenData.self, from: data) else {
-            return nil
-        }
-        return tokenData
-    }
-    
-    func clearTokenData() {
-        userDefaults.removeObject(forKey: tokenKey)
-        print("🗑️ Cleared token data")
-    }
-    
-    var hasValidToken: Bool {
-        guard let tokenData = getTokenData() else { return false }
-        return !tokenData.isExpired
-    }
-    
-    var shouldRefreshToken: Bool {
-        guard let tokenData = getTokenData() else { return false }
-        return tokenData.isExpiringSoon && tokenData.refreshToken != nil
-    }
-    
-    // MARK: - Update Methods
+    // MARK: - Data Update Methods
     
     func updateProfile(_ profile: SpotifyUserProfile) {
         var newData = cachedData ?? CachedSpotifyData()
@@ -243,16 +191,18 @@ class SpotifyDataStore: ObservableObject {
     }
     
     func updateAllData(profile: SpotifyUserProfile?,
-                      topArtists: [SpotifyArtist],
-                      topTracks: [SpotifyTrack],
-                      playlists: [SpotifyPlaylist],
-                      recentlyPlayed: [SpotifyPlayHistory]) {
+                      topArtists: [SpotifyArtist]?,
+                      topTracks: [SpotifyTrack]?,
+                      playlists: [SpotifyPlaylist]?,
+                      recentlyPlayed: [SpotifyPlayHistory]?) {
+        let currentData = cachedData ?? CachedSpotifyData()
+        
         let updatedData = CachedSpotifyData(
-            profile: profile,
-            topArtists: topArtists,
-            topTracks: topTracks,
-            playlists: playlists,
-            recentlyPlayed: recentlyPlayed
+            profile: profile ?? currentData.profile,
+            topArtists: topArtists ?? currentData.topArtists,
+            topTracks: topTracks ?? currentData.topTracks,
+            playlists: playlists ?? currentData.playlists,
+            recentlyPlayed: recentlyPlayed ?? currentData.recentlyPlayed
         )
         saveCachedData(updatedData)
     }

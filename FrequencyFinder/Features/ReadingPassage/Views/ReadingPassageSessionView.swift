@@ -32,12 +32,11 @@ struct ReadingPassageSessionView: View {
                                 .foregroundColor(.red)
                                 .padding(.top)
                         }
-                    }
-                    .padding()
-                }
-                .safeAreaInset(edge: .bottom) {
-                    CardView {
-                        RecordingControlsView(viewModel: viewModel, isPressed: $isRecordButtonPressed)
+                        
+                        // Recording Controls
+                        CardView {
+                            RecordingControlsView(viewModel: viewModel, isPressed: $isRecordButtonPressed)
+                        }
                     }
                     .padding()
                 }

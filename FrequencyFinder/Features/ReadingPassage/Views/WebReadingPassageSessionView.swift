@@ -27,7 +27,7 @@ struct WebReadingPassageSessionView: View {
                     }
                     
                     // Results and error overlay - minimal space usage
-                    VStack(spacing: 16) {
+                    VStack(spacing: 12) {
                         if viewModel.showResult {
                             DismissibleResultsCard(viewModel: viewModel)
                                 .onAppear { UINotificationFeedbackGenerator().notificationOccurred(.success) }
@@ -37,7 +37,8 @@ struct WebReadingPassageSessionView: View {
                             Text("Recording too short or invalid. Please try again.")
                                 .multilineTextAlignment(.center)
                                 .foregroundColor(.red)
-                                .padding()
+                                .padding(.horizontal)
+                                .padding(.vertical, 8)
                         }
                     }
                     .padding(.horizontal)
@@ -47,9 +48,15 @@ struct WebReadingPassageSessionView: View {
                         CardView {
                             WebRecordingControlsView(viewModel: viewModel, isPressed: $isRecordButtonPressed)
                         }
-                        .padding()
+                        .padding(.horizontal)
+                        .padding(.vertical, 8)
+                        .transition(.asymmetric(
+                            insertion: .move(edge: .bottom).combined(with: .opacity),
+                            removal: .move(edge: .bottom).combined(with: .opacity)
+                        ))
                     }
                 }
+                .animation(.easeInOut(duration: 0.6), value: viewModel.hasPassageId)
                 
                 // Soft blue glow border when recording
                 if viewModel.isRecording {
@@ -200,6 +207,7 @@ struct DismissibleResultsCard: View {
 struct WebRecordingControlsView: View {
     @ObservedObject var viewModel: WebReadingPassageViewModel
     @Binding var isPressed: Bool
+    @State private var buttonScale: CGFloat = 0.8
     
     var body: some View {
         HStack(spacing: 12) {
@@ -232,7 +240,7 @@ struct WebRecordingControlsView: View {
                     } else {
                         Circle()
                             .fill(Color.gray)
-                            .frame(width: 6, height: 6)
+                            .frame(width: 2, height: 6)
                             .opacity(0.3)
                     }
                 }
@@ -266,15 +274,22 @@ struct WebRecordingControlsView: View {
                             .font(.headline)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding()
+                    .padding(.vertical, 12)
+                    .padding(.horizontal, 16)
                     .background(Color.accentColor)
                     .foregroundColor(.white)
                     .cornerRadius(12)
                     .scaleEffect(isPressed ? 1.05 : 1.0)
                 }
+                .scaleEffect(buttonScale)
+                .onAppear {
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.6).delay(0.2)) {
+                        buttonScale = 1.0
+                    }
+                }
             }
         }
-        .frame(minHeight: 44)
+        .frame(minHeight: 40)
         .animation(.spring(response: 0.5, dampingFraction: 0.8), value: viewModel.isRecording)
     }
     
@@ -390,9 +405,122 @@ struct WebLoadingView: View {
     }
 }
 
+// MARK: - Mock Recording Controls for Preview
+struct MockWebRecordingControlsView: View {
+    let isRecording: Bool
+    @State private var isPressed = false
+    @State private var buttonScale: CGFloat = 0.8
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            if isRecording {
+                // Left side: Timer with animated recording indicator
+                HStack(spacing: 8) {
+                    // Animated recording dot
+                    Circle()
+                        .fill(Color.red)
+                        .frame(width: 8, height: 8)
+                        .opacity(0.3)
+                        .scaleEffect(1.5)
+                        .animation(.easeInOut(duration: 0.8).repeatForever(autoreverses: true), value: isRecording)
+                    
+                    Text("⏱ 0:12")
+                        .font(.headline.monospacedDigit())
+                        .foregroundColor(.primary)
+                    
+                    // Pitch detection indicator
+                    Circle()
+                        .fill(Color.green)
+                        .frame(width: 6, height: 6)
+                        .opacity(0.8)
+                        .scaleEffect(1.2)
+                        .animation(.easeOut(duration: 0.1), value: UUID())
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                
+                // Right side: Compact stop button
+                Button(action: {}) {
+                    HStack(spacing: 4) {
+                        Image(systemName: "stop.fill")
+                            .font(.subheadline)
+                        Text("Stop")
+                            .font(.headline)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(Color.red)
+                    .foregroundColor(.white)
+                    .cornerRadius(8)
+                    .scaleEffect(isPressed ? 1.05 : 1.0)
+                }
+            } else {
+                // Full-width start recording button
+                Button(action: { isPressed.toggle(); DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { isPressed.toggle() } }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "mic.fill")
+                            .font(.title3)
+                        Text("Start Recording")
+                            .font(.headline)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .padding(.horizontal, 16)
+                    .background(Color.accentColor)
+                    .foregroundColor(.white)
+                    .cornerRadius(12)
+                    .scaleEffect(isPressed ? 1.05 : 1.0)
+                }
+                .scaleEffect(buttonScale)
+                .onAppear {
+                    withAnimation(.spring(response: 0.5, dampingFraction: 0.6).delay(0.2)) {
+                        buttonScale = 1.0
+                    }
+                }
+            }
+        }
+        .frame(minHeight: 40)
+    }
+}
+
 // MARK: - Preview
 struct WebReadingPassageSessionView_Previews: PreviewProvider {
     static var previews: some View {
-        WebReadingPassageSessionView(profileManager: UserProfileManager())
+        VStack(spacing: 0) {
+            // Simulated web content area
+            Rectangle()
+                .fill(Color.gray.opacity(0.1))
+                .overlay(
+                    Text("📱 Web Reading Passage Content\n(Simulated)")
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.secondary)
+                )
+            
+            // Simulated recording controls
+            CardView {
+                MockWebRecordingControlsView(isRecording: false)
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+        }
+        .previewDisplayName("Start Recording Button")
+        
+        VStack(spacing: 0) {
+            // Simulated web content area
+            Rectangle()
+                .fill(Color.gray.opacity(0.1))
+                .overlay(
+                    Text("📱 Web Reading Passage Content\n(Recording...)")
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.secondary)
+                )
+            
+            // Simulated recording controls - recording state
+            CardView {
+                MockWebRecordingControlsView(isRecording: true)
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 8)
+        }
+        .previewDisplayName("Recording State")
     }
 }
