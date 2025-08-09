@@ -21,16 +21,21 @@ public final class AccelerateFFT {
     
     /// Initialize FFT processor
     /// - Parameters:
-    ///   - M: Log2 of FFT size (matches ZenFFT parameter)
-    ///   - size: FFT size (matches ZenFFT parameter, used for buffer allocation)
+    ///   - M: Bit-reversal table size parameter (matches ZenFFT parameter)
+    ///   - size: Actual FFT size (matches ZenFFT parameter)
     public init(M: Int, size: Double) {
-        self.logSize = M
-        self.fftSize = 1 << M
+        // Match ZenFFT behavior: actual log size comes from size parameter
+        self.logSize = Int(log2(size))
+        self.fftSize = Int(size)
         self.halfSize = fftSize / 2
         
+        // Validate parameters to prevent memory corruption
+        assert(fftSize == (1 << logSize), "FFT size must be power of 2: \(fftSize) != 2^(\(logSize))")
+        print("AccelerateFFT init: M=\(M), size=\(size), logSize=\(logSize), fftSize=\(fftSize), halfSize=\(halfSize)")
+        
         // Create FFT setup for complex-to-complex transform
-        guard let setup = vDSP_create_fftsetup(vDSP_Length(M), FFTRadix(kFFTRadix2)) else {
-            fatalError("Failed to create vDSP FFT setup with M=\(M)")
+        guard let setup = vDSP_create_fftsetup(vDSP_Length(logSize), FFTRadix(kFFTRadix2)) else {
+            fatalError("Failed to create vDSP FFT setup with logSize=\(logSize)")
         }
         self.fftSetup = setup
         
@@ -62,6 +67,10 @@ public final class AccelerateFFT {
         
         // Ensure we don't exceed our buffer capacity
         let validSize = min(inputHalfSize, halfSize)
+        
+        // Validate input buffer size
+        assert(buf.count >= validSize * 2, "Input buffer too small: \(buf.count) < \(validSize * 2)")
+        assert(validSize <= halfSize, "ValidSize exceeds halfSize: \(validSize) > \(halfSize)")
         
         // Extract real and imaginary parts from interleaved buffer
         for i in 0..<validSize {
