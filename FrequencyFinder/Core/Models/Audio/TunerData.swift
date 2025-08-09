@@ -58,7 +58,9 @@ final class TunerData: ObservableObject {
 
     // MARK: - Method Delegation
     func updatePitch(to newPitch: Double) {
+        print("📊 TunerData: updatePitch called with \(newPitch)")
         pitchTracker.updatePitch(to: newPitch)
+        print("📊 TunerData: After update - pitch: \(pitch.measurement.value), note: \(closestNote.note.names)")
     }
 
     func startRecording() {
