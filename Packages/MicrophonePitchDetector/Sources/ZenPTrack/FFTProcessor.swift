@@ -69,7 +69,7 @@ public final class FFTProcessor {
 public struct FFTConfiguration {
     /// Default FFT implementation to use throughout the app
     /// Change this to .zen to use the original implementation for comparison
-    public static var defaultImplementation: FFTImplementation = .zen
+    public static var defaultImplementation: FFTImplementation = .accelerate
     
     /// Enable performance monitoring
     public static var enablePerformanceLogging = false

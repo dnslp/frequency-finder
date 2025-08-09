@@ -71,6 +71,10 @@ public final class AccelerateFFT {
         assert(buf.count >= validSize * 2, "Input buffer too small: \(buf.count) < \(validSize * 2)")
         assert(validSize <= halfSize, "ValidSize exceeds halfSize: \(validSize) > \(halfSize)")
         
+        // Clear buffers first to ensure clean state
+        vDSP_vclr(realBuffer, 1, vDSP_Length(halfSize))
+        vDSP_vclr(imagBuffer, 1, vDSP_Length(halfSize))
+        
         // Extract real and imaginary parts from interleaved buffer
         for i in 0..<validSize {
             realBuffer[i] = buf[i * 2]
@@ -78,12 +82,19 @@ public final class AccelerateFFT {
         }
         
         // Perform forward FFT (complex-to-complex)
+        // Note: stride of 1 means elements are contiguous in our split complex arrays
         vDSP_fft_zip(fftSetup, &splitComplex, 1, vDSP_Length(logSize), FFTDirection(kFFTDirection_Forward))
         
         // Reinterleave back into original buffer format
+        // Only write back the data we actually processed
         for i in 0..<validSize {
             buf[i * 2] = realBuffer[i]
             buf[i * 2 + 1] = imagBuffer[i]
+        }
+        
+        // Zero out any remaining buffer elements that weren't processed
+        for i in stride(from: validSize * 2, to: buf.count, by: 1) {
+            buf[i] = 0.0
         }
     }
 }
