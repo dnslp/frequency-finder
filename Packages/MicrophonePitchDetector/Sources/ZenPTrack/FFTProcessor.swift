@@ -28,23 +28,17 @@ public final class FFTProcessor {
     ///   - size: FFT size 
     ///   - implementation: Which FFT implementation to use
     public init(M: Int, size: Double, implementation: FFTImplementation = .accelerate) {
-        print("🔍 FFTProcessor Debug: Attempting to create FFT with M=", M, "size=", size, "implementation=", implementation)
-        
         self.implementation = implementation
         
         switch implementation {
         case .zen:
-            print("🔍 FFTProcessor: Creating ZenFFT")
             self.zenFFT = ZenFFT(M: M, size: size)
             self.accelerateFFT = nil
             
         case .accelerate:
-            print("🔍 FFTProcessor: Creating AccelerateFFT")
             self.zenFFT = nil
             self.accelerateFFT = AccelerateFFT(M: M, size: size)
         }
-        
-        print("✅ FFTProcessor: Successfully created \(implementation == .accelerate ? "AccelerateFFT" : "ZenFFT")")
     }
     
     /// Compute FFT using the selected implementation
@@ -81,26 +75,14 @@ public struct FFTConfiguration {
     public static var enablePerformanceLogging = false
     
     /// Log performance comparison on first use
-    public static var logInitialBenchmark = true
+    public static var logInitialBenchmark = false
     
     /// Performance monitoring helper
     public static func logPerformanceIfNeeded() {
-        guard logInitialBenchmark else { return }
+        guard logInitialBenchmark && enablePerformanceLogging else { return }
         
         logInitialBenchmark = false
         
-        print("🚀 FFT Implementation Performance")
-        print("=================================")
-        
-        // Use a safer approach that doesn't rely on complex initialization
-        print("Performance logging temporarily disabled to prevent crashes")
-        print(String(format: "Using:      %@", defaultImplementation == .accelerate ? "Accelerate" : "ZenFFT"))
-        print()
-        
-        // TODO: Re-enable when initialization is stable
-        // let results = FFTProcessor.performanceComparison()
-        // print(String(format: "Accelerate: %.2f ms", results.accelerate * 1000))
-        // print(String(format: "ZenFFT:     %.2f ms", results.zen * 1000))
-        // print(String(format: "Speedup:    %.1fx faster", results.speedup))
+        print("🚀 FFT Implementation: \(defaultImplementation == .accelerate ? "Accelerate" : "ZenFFT")")
     }
 }

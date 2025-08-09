@@ -17,18 +17,16 @@ public final class AccelerateFFT {
     private var imagBuffer: UnsafeMutablePointer<Float>
     private var splitComplex: DSPSplitComplex
     private let fftSize: Int
+    private let halfSize: Int
     
     /// Initialize FFT processor
     /// - Parameters:
     ///   - M: Log2 of FFT size (matches ZenFFT parameter)
     ///   - size: FFT size (matches ZenFFT parameter, used for buffer allocation)
     public init(M: Int, size: Double) {
-        print("🔍 AccelerateFFT Debug: M=", M, "size=", size)
-        
         self.logSize = M
         self.fftSize = 1 << M
-        
-        print("🔍 AccelerateFFT Debug: logSize=", logSize, "fftSize=", fftSize)
+        self.halfSize = fftSize / 2
         
         // Create FFT setup for complex-to-complex transform
         guard let setup = vDSP_create_fftsetup(vDSP_Length(M), FFTRadix(kFFTRadix2)) else {
@@ -37,12 +35,12 @@ public final class AccelerateFFT {
         self.fftSetup = setup
         
         // Allocate aligned memory for FFT buffers
-        self.realBuffer = UnsafeMutablePointer<Float>.allocate(capacity: fftSize)
-        self.imagBuffer = UnsafeMutablePointer<Float>.allocate(capacity: fftSize)
+        self.realBuffer = UnsafeMutablePointer<Float>.allocate(capacity: halfSize)
+        self.imagBuffer = UnsafeMutablePointer<Float>.allocate(capacity: halfSize)
         
         // Initialize buffers to zero
-        realBuffer.initialize(repeating: 0.0, count: fftSize)
-        imagBuffer.initialize(repeating: 0.0, count: fftSize)
+        realBuffer.initialize(repeating: 0.0, count: halfSize)
+        imagBuffer.initialize(repeating: 0.0, count: halfSize)
         
         // Create split complex structure
         self.splitComplex = DSPSplitComplex(realp: realBuffer, imagp: imagBuffer)
@@ -50,6 +48,8 @@ public final class AccelerateFFT {
     
     deinit {
         vDSP_destroy_fftsetup(fftSetup)
+        realBuffer.deinitialize(count: halfSize)
+        imagBuffer.deinitialize(count: halfSize)
         realBuffer.deallocate()
         imagBuffer.deallocate()
     }
@@ -58,19 +58,22 @@ public final class AccelerateFFT {
     /// Maintains ZenFFT interface: input/output in same buffer, interleaved format
     /// - Parameter buf: Interleaved real/imaginary buffer [re0, im0, re1, im1, ...]
     public func compute(buf: inout [Float]) {
-        let halfSize = buf.count / 2
+        let inputHalfSize = buf.count / 2
+        
+        // Ensure we don't exceed our buffer capacity
+        let validSize = min(inputHalfSize, halfSize)
         
         // Extract real and imaginary parts from interleaved buffer
-        for i in 0..<halfSize {
+        for i in 0..<validSize {
             realBuffer[i] = buf[i * 2]
             imagBuffer[i] = buf[i * 2 + 1]
         }
         
         // Perform forward FFT (complex-to-complex)
-        vDSP_fft_zrip(fftSetup, &splitComplex, 1, vDSP_Length(logSize), FFTDirection(kFFTDirection_Forward))
+        vDSP_fft_zip(fftSetup, &splitComplex, 1, vDSP_Length(logSize), FFTDirection(kFFTDirection_Forward))
         
         // Reinterleave back into original buffer format
-        for i in 0..<halfSize {
+        for i in 0..<validSize {
             buf[i * 2] = realBuffer[i]
             buf[i * 2 + 1] = imagBuffer[i]
         }
