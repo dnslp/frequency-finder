@@ -31,7 +31,6 @@ public final class AccelerateFFT {
         
         // Validate parameters to prevent memory corruption
         assert(fftSize == (1 << logSize), "FFT size must be power of 2: \(fftSize) != 2^(\(logSize))")
-        print("AccelerateFFT init: M=\(M), size=\(size), logSize=\(logSize), fftSize=\(fftSize), halfSize=\(halfSize)")
         
         // Create FFT setup for complex-to-complex transform
         guard let setup = vDSP_create_fftsetup(vDSP_Length(logSize), FFTRadix(kFFTRadix2)) else {
