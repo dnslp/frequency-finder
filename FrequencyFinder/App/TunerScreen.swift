@@ -3,6 +3,7 @@ import SwiftUI
 
 struct TunerScreen: View {
     @ObservedObject private var pitchDetector = MicrophonePitchDetector()
+    @StateObject private var tunerData = TunerData()
     @AppStorage("modifierPreference")
     private var modifierPreference = ModifierPreference.preferSharps
     @AppStorage("selectedTransposition")
@@ -10,12 +11,15 @@ struct TunerScreen: View {
 
     var body: some View {
         TunerView(
-            tunerData: TunerData(pitch: pitchDetector.pitch),
+            tunerData: tunerData,
             modifierPreference: modifierPreference,
             selectedTransposition: selectedTransposition
         )
         .opacity(pitchDetector.didReceiveAudio ? 1 : 0.5)
         .animation(.easeInOut, value: pitchDetector.didReceiveAudio)
+        .onChange(of: pitchDetector.pitch) { newPitch in
+            tunerData.updatePitch(to: newPitch)
+        }
         .task {
             do {
                 try await pitchDetector.activate()
