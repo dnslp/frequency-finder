@@ -1,7 +1,6 @@
 import SwiftUI
 import Combine
-import MicrophonePitchDetector
-import WebKit
+@preconcurrency import WebKit
 
 class WebReadingPassageViewModel: ObservableObject {
     @Published var fontSize: CGFloat = 16
@@ -47,7 +46,7 @@ class WebReadingPassageViewModel: ObservableObject {
     // Debug flag - set to true to always show recording button for testing
     let alwaysShowRecordingButton = false
     
-    private var pitchDetector = MicrophonePitchDetector()
+    private var audioManager = AudioManager()
     private var pitchSamples: [Double] = []
     private var startTime: Date?
     private var duration: TimeInterval = 0
@@ -73,15 +72,8 @@ class WebReadingPassageViewModel: ObservableObject {
     
     func activatePitchDetector() {
         print("🎤 DEBUG: Attempting to activate pitch detector...")
-        Task {
-            do {
-                try await pitchDetector.activate()
-                print("✅ DEBUG: Pitch detector activated successfully")
-            } catch {
-                print("❌ DEBUG: Microphone activation failed: \(error)")
-                print("❌ DEBUG: Error details: \(error.localizedDescription)")
-            }
-        }
+        audioManager.start()
+        print("✅ DEBUG: Pitch detector activated successfully")
     }
     
     func invalidateTimers() {
@@ -121,6 +113,12 @@ class WebReadingPassageViewModel: ObservableObject {
         promptRerecord = false
         showResult = false
         
+        // Start audio processing if not already running
+        if !audioManager.isListening {
+            audioManager.start()
+            print("🎙️ DEBUG: Started AudioManager")
+        }
+        
         print("🎙️ DEBUG: Recording state set to true, starting timers...")
         
         wavePhase = 0
@@ -130,7 +128,7 @@ class WebReadingPassageViewModel: ObservableObject {
         
         pitchTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
             guard let self = self else { return }
-            let pitch = self.pitchDetector.pitch
+            let pitch = Double(self.audioManager.frequency)
             print("🎵 DEBUG: Raw pitch detected: \(pitch)")
             
             if pitch > 55 && pitch < 500 {
@@ -156,6 +154,9 @@ class WebReadingPassageViewModel: ObservableObject {
         isRecording = false
         invalidateTimers()
         duration = Date().timeIntervalSince(startTime ?? Date())
+        
+        // Keep audio manager running for potential future recordings
+        // audioManager.stop()
         
         print("🛑 DEBUG: Recording stopped - Duration: \(duration)s, Samples collected: \(pitchSamples.count)")
         print("🛑 DEBUG: Minimum duration required: \(minSessionDuration)s, Minimum samples: \(minSampleCount)")

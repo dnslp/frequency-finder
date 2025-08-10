@@ -45,7 +45,8 @@ struct TunerView: View {
                 Text("Target: \(tunerData.closestNote.frequency.measurement.value, specifier: "%.1f") Hz")
                 Text("Actual: \(tunerData.pitch.measurement.value, specifier: "%.1f") Hz")
                 Text("Note: \(tunerData.closestNote.note.names) \(tunerData.closestNote.octave)")
-                Text("Harmonics: \(tunerData.harmonics)")
+                Text("Cents: \(tunerData.deltaCents, specifier: "%.0f")")
+                Text("Amplitude: \(tunerData.amplitude, specifier: "%.3f")")
             }
             
             Spacer()

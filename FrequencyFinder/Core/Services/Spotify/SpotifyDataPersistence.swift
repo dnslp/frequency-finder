@@ -131,7 +131,7 @@ class SpotifyDataPersistence: ObservableObject {
     // MARK: - Data Update Methods
     
     func updateProfile(_ profile: SpotifyUserProfile) {
-        var newData = cachedData ?? CachedSpotifyData()
+        let newData = cachedData ?? CachedSpotifyData()
         let updatedData = CachedSpotifyData(
             profile: profile,
             topArtists: newData.topArtists,
@@ -143,7 +143,7 @@ class SpotifyDataPersistence: ObservableObject {
     }
     
     func updateTopArtists(_ artists: [SpotifyArtist]) {
-        var newData = cachedData ?? CachedSpotifyData()
+        let newData = cachedData ?? CachedSpotifyData()
         let updatedData = CachedSpotifyData(
             profile: newData.profile,
             topArtists: artists,
@@ -155,7 +155,7 @@ class SpotifyDataPersistence: ObservableObject {
     }
     
     func updateTopTracks(_ tracks: [SpotifyTrack]) {
-        var newData = cachedData ?? CachedSpotifyData()
+        let newData = cachedData ?? CachedSpotifyData()
         let updatedData = CachedSpotifyData(
             profile: newData.profile,
             topArtists: newData.topArtists,
@@ -167,7 +167,7 @@ class SpotifyDataPersistence: ObservableObject {
     }
     
     func updatePlaylists(_ playlists: [SpotifyPlaylist]) {
-        var newData = cachedData ?? CachedSpotifyData()
+        let newData = cachedData ?? CachedSpotifyData()
         let updatedData = CachedSpotifyData(
             profile: newData.profile,
             topArtists: newData.topArtists,
@@ -179,7 +179,7 @@ class SpotifyDataPersistence: ObservableObject {
     }
     
     func updateRecentlyPlayed(_ recentTracks: [SpotifyPlayHistory]) {
-        var newData = cachedData ?? CachedSpotifyData()
+        let newData = cachedData ?? CachedSpotifyData()
         let updatedData = CachedSpotifyData(
             profile: newData.profile,
             topArtists: newData.topArtists,

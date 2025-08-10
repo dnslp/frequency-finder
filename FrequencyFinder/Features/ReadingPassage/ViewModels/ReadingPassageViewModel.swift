@@ -1,6 +1,5 @@
 import SwiftUI
 import Combine
-import MicrophonePitchDetector
 
 class ReadingPassageViewModel: ObservableObject {
     @Published var selectedPassageIndex = 0
@@ -18,7 +17,7 @@ class ReadingPassageViewModel: ObservableObject {
     @Published var smoothedPitch: Double = 0
     @Published var wavePhase = 0.0
 
-    private var pitchDetector = MicrophonePitchDetector()
+    private var audioManager = AudioManager()
     private var pitchSamples: [Double] = []
     private var startTime: Date?
     private var duration: TimeInterval = 0
@@ -39,13 +38,7 @@ class ReadingPassageViewModel: ObservableObject {
     }
 
     func activatePitchDetector() {
-        Task {
-            do {
-                try await pitchDetector.activate()
-            } catch {
-                print("❌ Microphone error: \(error)")
-            }
-        }
+        audioManager.start()
     }
 
     func invalidateTimers() {
@@ -65,6 +58,11 @@ class ReadingPassageViewModel: ObservableObject {
         promptRerecord = false
         showResult = false
 
+        // Start audio processing if not already running
+        if !audioManager.isListening {
+            audioManager.start()
+        }
+
         wavePhase = 0
         waveTimer = Timer.scheduledTimer(withTimeInterval: 1/60, repeats: true) { [weak self] _ in
             self?.wavePhase += 0.15
@@ -72,7 +70,7 @@ class ReadingPassageViewModel: ObservableObject {
 
         pitchTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
             guard let self = self else { return }
-            let pitch = self.pitchDetector.pitch
+            let pitch = Double(self.audioManager.frequency)
             if pitch > 55 && pitch < 500 {
                 self.pitchSamples.append(pitch)
                 self.smoothedPitch = self.smoothedPitch * (1 - self.pitchSmoothingFactor) + pitch * self.pitchSmoothingFactor
@@ -90,6 +88,9 @@ class ReadingPassageViewModel: ObservableObject {
         isRecording = false
         invalidateTimers()
         duration = Date().timeIntervalSince(startTime ?? Date())
+
+        // Keep audio manager running for potential future recordings
+        // audioManager.stop()
 
         guard duration >= minSessionDuration, pitchSamples.count >= minSampleCount else {
             promptRerecord = true

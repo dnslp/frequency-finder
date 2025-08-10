@@ -1,5 +1,5 @@
 import SwiftUI
-import WebKit
+@preconcurrency import WebKit
 
 struct ReadingPassageWebView: View {
   let url = URL(string: "https://dnslp.github.io/reading-passage/")!
